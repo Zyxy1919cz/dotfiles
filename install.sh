@@ -8,10 +8,19 @@ install_emacs
 install_xmonad
 install_pass
 
+make_dirs() {
+    echo "Creating directories..."
+    mkdir -v ~/Main ~/Main/Devel ~/Main/Documents ~/Main/Downloads ~/Main/Git ~/Main/Docker
+    mkdir -v ~/.config/emacs
+    mkdir -v ~/.config/.xmonad ~/.config/rofi ~/.config/rofi/themes
+    mkdir ~/.config/gtk-3.0
+}
+
 install_programs(){
-    mkdir ~/Main ~/Main/Devel ~/Main/Documents ~/Main/Downloads ~/Main/Git
     echo "(1/ ) Installing programs..."
-    pacman -Sv --noconfirm git base-devel sddm qt5-graphicaleffects
+    pacman -Sv --noconfirm git base-devel sddm qt5-graphicaleffects docker docker-compose npm yarn gulp
+    git clone https://aur.archlinux.org/nvm.git nvm
+    cd nvm && makepkg -sic && cd .. && rm -frvd nvm
     systemctl enable sddm
     echo "Done"
 }
@@ -28,7 +37,6 @@ install_visuals() {
 [Icon Theme]
 Inherits=LyraS-cursors
 EOF
-    mkdir ~/.config/gtk-3.0
     echo ~/.config/gtk-3.0/settings.ini <<EOF
 [Settings]
 gtk-cursor-theme-name=LyraS-cursors
@@ -45,9 +53,11 @@ EOF
 install_emacs() {
     echo "(6/ ) Installing Emacs..."
     pacman -Sv --noconfirm ripgrep emacs
-    mv ~/.emacs.d ~/.config/.emacs.d
-    git clone https://github.com/hlissner/doom-emacs ~/.config/.emacs.d
+    mv -v ~/.emacs.d ~/.config/emacs
+    git clone https://github.com/hlissner/doom-emacs ~/.config/emacs
     doom install
+    rm -vrfd ~/.doom.d
+    cp -vi config/doom ~/.config
     echo "Done"
 }
 
@@ -58,15 +68,15 @@ install_zshell() {
     cp /etc/xdg/termite/config ~/.config/termite/config
     touch ~/.config/.zsh/.histfile
     chmod 666 ~/.config/.zsh/.histfile
-    mv .zshrc ~/.config/.zsh/.zshrc
-    mv local_aliases.zsh ~/.config/.zsh/local_aliases.zsh
-    mv local_scripts.zsh ~/.config/.zsh/local_scripts.zsh
-    mv local_keys.zsh ~/.config/.zsh/local_keys.zsh
+    cp -vi .zshrc ~/.config/.zsh/.zshrc
+    cp -vi local_aliases.zsh ~/.config/.zsh/local_aliases.zsh
+    cp -vi local_scripts.zsh ~/.config/.zsh/local_scripts.zsh
+    cp -vi local_keys.zsh ~/.config/.zsh/local_keys.zsh
     echo -a /etc/zsh/zshenv <<EOF
 # Setting environment variables
 export ZDOTDIR=~/.config/.zsh
 export ZPLUG_HOME=~/.config/.zsh/zplug
-export DOOMDIR=~/.config/.doom.d
+export DOOMDIR=~/.config/doom
 export XMONAD_CONFIG_DIR=~/.config/.xmonad
 export XMONAD_DATA_DIR=~/.config/.xmonad
 export XMONAD_CACHE_DIR=~/.config/.xmonad
@@ -75,24 +85,20 @@ export PASSWORD_STORE_TOMB_KEY=~/.pass/.password.key.tomb
 EOF
     git clone https://github.com/zplug/zplug $ZPLUG_HOME
     gpg --delete-keys Denis Pujol
-    echo ~/.config/.zsh/zplug/plugins.zsh <<EOF
-# Zplug packages
-
-zplug 'zplug/zplug', hook-build:'zplug --self-manage'
-zplug romkatv/powerlevel10k, as:theme, depth:1
-zplug "zsh-users/zsh-syntax-highlighting", defer:2
-zplug "zsh-users/zsh-autosuggestions"
-EOF
+    cp -iv packages.zsh ~/.config/.zsh/zplug/packages.zsh
     echo "Done"
 }
 
 install_xmodan() {
     echo "(  ) Installing Xmonad"
-    pacman -S --noconfirm xmonad xmonad-contrib feh rofi picom
-    mkdir ~/.config/.xmonad ~/.config/rofi ~/.config/rofi/themes
-    mv main.rofi ~/.config/rofi/themes/main.rofi
-    mv xmonad.hs ~/.config/.xmonad
-    mv eww ~/.config/eww
+    pacman -S --noconfirm xmonad xmonad-contrib feh rofi xmobar
+    git clone https://aur.archlinux.org/picom-rounded-corners.git picom
+    cd picom && makepkg -sic && cd .. && rm -frvd picom
+    cp -vi config/main.rofi ~/.config/rofi/themes/main.rofi
+    cp -vi config/xmonad.hs ~/.config/.xmonad
+    cp -vi config/xmobarrc0 ~/.config/.xmonad
+    cp -vir config/eww ~/.config
+    cp -vir config/picom.conf ~/.config/picom/picom.conf
     echo ~/.config/rofi/config.rasi <<EOF
 configuration {
               theme: "~/.config/rofi/themes/main.rofi";
@@ -105,10 +111,10 @@ install_pass() {
     echo "(  ) Installing pass"
     pacman -Sv --noconfirm xclip gnupg openssh pass pinentry
     git clone https://aur.archlinux.org/tomb.git tomb
+    git clone https://aur.archlinux.org/pass-tomb.git pass-tomb
     curl https://keybase.io/jaromil/pgp_keys.asc | gpg --import
     curl https://pujol.io/keys/0xc5469996f0df68ec.asc | gpg --import
     cd tomb && makepkg -sci && cd .. && rm -frvd tomb
-    git clone https://aur.archlinux.org/pass-tomb.git pass-tomb
     cd pass-tomb && makepkg -sci && cd .. && rm -frvd pass-tomb
     gpg --delete-keys Denis Pujol
     echo "Done"
@@ -124,4 +130,6 @@ GRUB_THEME=/boot/grub/themes/Atomic/theme.txt
 usr/lib/sddm/sddm.conf.d/default.conf
 Current=sddm-slice
 CursorTheme=LyraS-cursors
+
+Install zranger
 EOF
