@@ -2,7 +2,31 @@
 set -euo pipefail
 
 echo "Synchronizing local dotfiles"
+#!/usr/bin/env bash
+
 # ZSH files
+if [ ! -d "config" ]
+then
+    echo "Creating folders..."
+    mkdir config
+    if [ ! -d "config/zsh" ]
+    then
+        mkdir config/zsh
+        if [ ! -d "config/rofi" ]
+        then
+            mkdir config/rofi
+            if [ ! -d "config/xmonad" ]
+            then
+                mkdir config/xmonad
+                if [ ! -d "config/picom" ]
+                then
+                    mkdir config/picom
+                fi
+            fi
+        fi
+    fi
+fi
+
 cp -iv ~/.config/.zsh/.zshrc config/zsh/.zshrc
 cp -iv ~/.config/.zsh/local_aliases.zsh config/zsh/local_aliases.zsh
 cp -iv ~/.config/.zsh/local_scripts.zsh config/zsh/local_scripts.zsh
