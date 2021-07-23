@@ -1,26 +1,28 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-install_programs
-install_visuals
-install_zshell
-install_emacs
-install_xmonad
-install_pass
 
 make_dirs() {
     echo "Creating directories..."
-    mkdir -v ~/Main ~/Main/Devel ~/Main/Documents ~/Main/Downloads ~/Main/Git ~/Main/Docker
-    mkdir -v ~/.config/emacs
-    mkdir -v ~/.config/.xmonad ~/.config/rofi ~/.config/rofi/themes
-    mkdir ~/.config/gtk-3.0
+    mkdir -vp ~/Main ~/Main/Devel ~/Main/Documents ~/Main/Downloads ~/Main/Git ~/Main/Docker ~/Main/Documents/org
+    mkdir -vp ~/.config/.emacs.d
+    mkdir -vp ~/.config/.zsh ~/.config/.xmonad ~/.config/rofi ~/.config/rofi/themes ~/.config/pacwall ~/.config/.wakatime
+    mkdir -vp ~/.config/gtk-3.0
 }
 
-install_programs(){
+install_programs() {
     echo "(1/ ) Installing programs..."
-    pacman -Sv --noconfirm git base-devel sddm qt5-graphicaleffects docker docker-compose npm yarn gulp
+    # Development packages
+    sudo pacman -Sv --noconfirm git base-devel sddm qt5-graphicaleffects docker docker-compose npm yarn gulp electron python python-pip rustup
+    # Applications
+    sudo pacman -Sv --noconfirm flameshot firefox
     git clone https://aur.archlinux.org/nvm.git nvm
+    git clone https://aur.archlinux.org/discord_arch_electron.git discord
     cd nvm && makepkg -sic && cd .. && rm -frvd nvm
+    cd discord && makepkg -sic && cd .. rm -frvd discord
+    # Wakatime
+    sudo pip install wakatime
+    cp -vir config/wakatime/* $WAKATIME_HOME
     systemctl enable sddm
     echo "Done"
 }
@@ -28,7 +30,9 @@ install_programs(){
 install_visuals() {
     echo "(2/ ) Installing Fonts"
     git clone https://aur.archlinux.org/nerd-fonts-roboto-mono.git roboto
+    git clone https://aur.archlinux.org/ttf-meslo.git meslo
     cd roboto && makepkg -sci && cd .. && rm -rdfv roboto
+    cd meslo && makepkg -sci && cd .. && rm -rdfv meslo
     echo "Done"
     echo "(3/ ) Installing Cursor"
     curl https://dllb2.pling.com/api/files/download/j/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjE2MjIxMzIyOTQiLCJ1IjpudWxsLCJsdCI6ImRvd25sb2FkIiwicyI6IjcxYjQ1MjhhZmMzZjk3ODRjYzdkNTlhNmIyYjI0Yjc1Y2UyYmZiZDkwZTAwYWFhMzU4ZDU2YWExZGY0NGFlOWQyMmUxNjQwODZlMzg1OTY1YmIzOThjODU5ZTYwZDlmOTRkYmU5Y2I5MzhkZDJjYWQyMGFmMjM4MWY2NWY4NjNkIiwidCI6MTYyNTkzMjIzMywic3RmcCI6IjE5ZDFkNDEyNDc5YTc2ZmIzZjMwODYwMzY3ODI1NzFmIiwic3RpcCI6IjQ2LjEzLjE5OC41MyJ9.pQZej7oOe13iqiBCHiRHK0muZb456o4ztikX_HgLd7Y/LyraS-cursors.tar.gz -L -O
@@ -52,27 +56,25 @@ EOF
 
 install_emacs() {
     echo "(6/ ) Installing Emacs..."
-    pacman -Sv --noconfirm ripgrep emacs
-    mv -v ~/.emacs.d ~/.config/emacs
-    git clone https://github.com/hlissner/doom-emacs ~/.config/emacs
+    sudo pacman -Sv --noconfirm ripgrep emacs
+    mv -v ~/.emacs.d ~/.config/.emacs.d
+    git clone https://github.com/hlissner/doom-emacs ~/.config/.emacs.d
     doom install
-    rm -vrfd ~/.doom.d
-    cp -vi config/doom ~/.config
+    cp -vir config/doom/* ~/.config/.doom.d/
     echo "Done"
 }
 
 install_zshell() {
-    echo "(5/ ) Installing ZShell..."
-    pacman -Sv --noconfirm zsh zsh-completions tmux ranger
-    mkdir ~/.config/.zsh
-    cp /etc/xdg/termite/config ~/.config/termite/config
+    echo "(1/ ) Installing ZShell..."
+    sudo pacman -Sv --noconfirm zsh zsh-completions tmux ranger
+    cp -vi config/termite/config ~/.config/termite/config
     touch ~/.config/.zsh/.histfile
     chmod 666 ~/.config/.zsh/.histfile
-    cp -vi .zshrc ~/.config/.zsh/.zshrc
-    cp -vi local_aliases.zsh ~/.config/.zsh/local_aliases.zsh
-    cp -vi local_scripts.zsh ~/.config/.zsh/local_scripts.zsh
-    cp -vi local_keys.zsh ~/.config/.zsh/local_keys.zsh
-    echo -a /etc/zsh/zshenv <<EOF
+    cp -vi config/zsh/.zshrc ~/.config/.zsh/.zshrc
+    cp -vi config/zsh/local_aliases.zsh ~/.config/.zsh/local_aliases.zsh
+    cp -vi config/zsh/local_scripts.zsh ~/.config/.zsh/local_scripts.zsh
+    cp -vi config/zsh/local_keys.zsh ~/.config/.zsh/local_keys.zsh
+    echo /etc/zsh/zshenv <<EOF
 # Setting environment variables
 export ZDOTDIR=~/.config/.zsh
 export ZPLUG_HOME=~/.config/.zsh/zplug
@@ -80,25 +82,29 @@ export DOOMDIR=~/.config/doom
 export XMONAD_CONFIG_DIR=~/.config/.xmonad
 export XMONAD_DATA_DIR=~/.config/.xmonad
 export XMONAD_CACHE_DIR=~/.config/.xmonad
+export WAKATIME_HOME=~/.config/.wakatime
 export PASSWORD_STORE_TOMB_FILE=~/.pass/.password.tomb
 export PASSWORD_STORE_TOMB_KEY=~/.pass/.password.key.tomb
+export GNUPGHOME=~/.config/.gnupg
 EOF
-    git clone https://github.com/zplug/zplug $ZPLUG_HOME
-    gpg --delete-keys Denis Pujol
-    cp -iv packages.zsh ~/.config/.zsh/zplug/packages.zsh
+    #git clone https://github.com/zplug/zplug $ZPLUG_HOME
+    cp -iv config/zsh/packages.zsh ~/.config/.zsh/zplug/packages.zsh
+    #source ~/.config/.zsh/.zshrc
+    source /etc/zsh/zshenv
     echo "Done"
 }
 
-install_xmodan() {
+install_xmonad() {
     echo "(  ) Installing Xmonad"
-    pacman -S --noconfirm xmonad xmonad-contrib feh rofi xmobar
+    sudo pacman -S --noconfirm xmonad xmonad-contrib rofi xmobar pacwall
+    sudo pacman -Sv --noconfirm --needed hsetroot
     git clone https://aur.archlinux.org/picom-rounded-corners.git picom
     cd picom && makepkg -sic && cd .. && rm -frvd picom
-    cp -vi config/main.rofi ~/.config/rofi/themes/main.rofi
-    cp -vi config/xmonad.hs ~/.config/.xmonad
-    cp -vi config/xmobarrc0 ~/.config/.xmonad
-    cp -vir config/eww ~/.config
-    cp -vir config/picom.conf ~/.config/picom/picom.conf
+    cp -vi config/rofi/main.rofi ~/.config/rofi/themes/main.rofi
+    cp -vi config/xmonad/xmonad.hs ~/.config/.xmonad
+    cp -vi config/xmonad/xmobarrc0 ~/.config/.xmonad
+    cp -vir config/eww/* ~/.config/eww/
+    cp -vi config/picom/picom.conf ~/.config/picom/picom.conf
     echo ~/.config/rofi/config.rasi <<EOF
 configuration {
               theme: "~/.config/rofi/themes/main.rofi";
@@ -109,7 +115,7 @@ EOF
 
 install_pass() {
     echo "(  ) Installing pass"
-    pacman -Sv --noconfirm xclip gnupg openssh pass pinentry
+    sudo pacman -Sv --noconfirm xclip gnupg openssh pass pinentry
     git clone https://aur.archlinux.org/tomb.git tomb
     git clone https://aur.archlinux.org/pass-tomb.git pass-tomb
     curl https://keybase.io/jaromil/pgp_keys.asc | gpg --import
@@ -119,6 +125,14 @@ install_pass() {
     gpg --delete-keys Denis Pujol
     echo "Done"
 }
+
+make_dirs
+install_zshell
+install_programs
+install_visuals
+install_emacs
+install_xmonad
+install_pass
 
 cat <<EOF
 Installation done

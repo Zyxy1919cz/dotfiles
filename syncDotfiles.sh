@@ -2,9 +2,7 @@
 set -euo pipefail
 
 echo "Synchronizing local dotfiles"
-#!/usr/bin/env bash
 
-# ZSH files
 if [ ! -d "config" ]
 then
     echo "Creating folders..."
@@ -21,23 +19,47 @@ then
                 if [ ! -d "config/picom" ]
                 then
                     mkdir config/picom
+                    if [ ! -d "config/pacwall" ]
+                    then
+                        mkdir config/pacwall
+                        if [ ! -d "config/wakatime" ]
+                        then
+                            mkdir  config/wakatime
+                            if [ ! -d "config/termite" ]
+                            then
+                                mkdir config/termite
+                                if [ ! -d config/doom ]
+                                then
+                                    mkdir config/doom
+                                    if [ ! -d config/eww ]
+                                    then
+                                        mkdir config/eww
+                                    fi
+                                fi
+                            fi
+                        fi
+                    fi
                 fi
             fi
         fi
     fi
 fi
 
-cp -iv ~/.config/.zsh/.zshrc config/zsh/.zshrc
-cp -iv ~/.config/.zsh/local_aliases.zsh config/zsh/local_aliases.zsh
-cp -iv ~/.config/.zsh/local_scripts.zsh config/zsh/local_scripts.zsh
-cp -iv ~/.config/.zsh/local_keys.zsh config/zsh/local_keys.zsh
-cp -iv ~/.config/.zsh/zplug/packages.zsh config/zsh/packages.zsh
+# ZSH files
+cp -ivf $HOME/.config/.zsh/.zshrc config/zsh
+cp -iv $HOME/.config/.zsh/local_aliases.zsh config/zsh
+cp -iv $HOME/.config/.zsh/local_scripts.zsh config/zsh
+cp -iv $HOME/.config/.zsh/local_keys.zsh config/zsh
+cp -iv $HOME/.config/.zsh/zplug/packages.zsh config/zsh
+
+# Termite config
+cp -iv ~/.config/termite/config config/termite/config
 
 # Rofi files
 cp -iv ~/.config/rofi/themes/main.rofi config/rofi/main.rofi
 
 # Eww files
-cp -ivr ~/.config/eww config/eww
+cp -ivr ~/.config/eww/* config/eww/
 
 # Xmonad files
 cp -iv ~/.config/.xmonad/xmonad.hs config/xmonad/xmonad.hs
@@ -47,5 +69,12 @@ cp -iv ~/.config/.xmonad/xmobarrc0 config/xmonad/xmobarrc0
 cp -iv ~/.config/picom/picom.conf config/picom/picom.conf
 
 # Doom Emacs config
-cp -iv ~/.config/doom config/doom
+cp -ivr ~/.config/.doom.d/* config/doom/
+
+# Pacwall config
+cp -iv ~/.config/pacwall/pacwall.conf config/pacwall/pacwall.conf
+
+# Wakatime config
+cp -ivr ~/.config/.wakatime/* config/wakatime/
+
 echo "Done"
