@@ -1,6 +1,6 @@
-Config { font = "xft:RobotoMono:size=10:antialias=true, xft:MesloLGS NF:size=11:antialias=true:hinting=true"
+Config { font = "xft:RobotoMono:size=11:antialias=true, xft:MesloLGS NF:size=11:antialias=true:hinting=true"
         , additionalFonts = [ "xft:RobotoMono:size=11:antialias=true:hinting=true"
-                            , "xft:MesloLGS NF:size=11:antialias=true:hinting=true"
+                            , "xft:MesloLGS NF:size=18:antialias=true:hinting=true"
                             ]
         , bgColor = "#282c34"
         , fgColor = "grey"
@@ -18,5 +18,5 @@ Config { font = "xft:RobotoMono:size=10:antialias=true, xft:MesloLGS NF:size=11:
                         ]
         , sepChar = "%"
         , alignSep = "}{"
-        , template = "<fn=2></fn>%StdinReader% | %cpu% | <fn=1></fn> %memory% * %swap% | \xf108 %eth0% - %eth1% }{ %alsa:default:Master% | <fc=#ee9a00>%date%</fc> | %uname% | %CYVR% "
+        , template = "%StdinReader% | %cpu% | <fn=1></fn> %memory% * %swap% | \xf108 %eth0% - %eth1% }{ %alsa:default:Master% | <fc=#ee9a00>%date%</fc> | %uname% | %CYVR% "
         }

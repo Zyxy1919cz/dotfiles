@@ -15,7 +15,7 @@ fpath=($HOME/.config/.zsh/zplug/repos/vifon/zranger $fpath)
 
 # Setting $PATH variable
 typeset -U PATH path
-path=("$HOME/.local/bin" "$HOME/.emacs.d/bin" "$HOME/.bin" "$HOME/.cargo/bin"  "$path[@]")
+path=("$HOME/.local/bin" "$HOME/.config/.emacs.d/bin" "$HOME/.bin" "$HOME/.cargo/bin"  "$path[@]")
 export PATH
 
 # ZShell completion
@@ -39,6 +39,7 @@ setopt HIST_IGNORE_ALL_DUPS
 
 # Source local scripts
 source ~/.config/.zsh/zplug/init.zsh
+source /usr/share/nvm/init-nvm.sh
 
 # Source Node.js version manager
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
@@ -49,7 +50,7 @@ source ~/.config/.zsh/local_aliases.zsh
 source ~/.config/.zsh/local_scripts.zsh
 source ~/.config/.zsh/local_keys.zsh
 
-# ZPlug 
+# ZPlug
 if ! zplug check --verbose; then
     printf "Install? [y/N]: "
     if read -q; then
@@ -61,4 +62,3 @@ zplug load
 
 # To customize prompt, run `p10k configure` or edit ~/.config/.zsh/.p10k.zsh.
 [[ ! -f ~/.config/.zsh/.p10k.zsh ]] || source ~/.config/.zsh/.p10k.zsh
-source /usr/share/nvm/init-nvm.sh

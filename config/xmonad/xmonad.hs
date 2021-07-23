@@ -65,7 +65,7 @@ myModMask       = mod1Mask
 -- > workspaces = ["web", "irc", "code" ] ++ map show [4..9]
 --
 myWorkspaces :: [String]
-myWorkspaces    = ["1:<fn=2>\63578</fn>","2:\61888","3:","4:\61888","\fa9e","6","7","8","9"]
+myWorkspaces    = ["<fn=2>\61461</fn>","<fn=2>\59205</fn> ","<fn=2>\59145</fn> ","4:\61888","\fa9e","6","7","8","9"]
 -- Border colors for unfocused and focused windows, respectively.
 --
 myNormalBorderColor :: String
@@ -146,10 +146,10 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm              , xK_period), sendMessage (IncMasterN (-1)))
 
     -- Start firefox
-    , ((modm              , xK_f     ), spawn (myBrowser))
+    , ((modm .|. shiftMask, xK_f     ), spawn (myBrowser))
 
     -- Start Doom Emacs
-    , ((modm              , xK_d     ), spawn (myEditor))
+    , ((modm .|. shiftMask, xK_d     ), spawn (myEditor))
 
     -- Start Flameshot
     --GUI
@@ -285,13 +285,12 @@ myLogHook = dynamicLog
 --
 -- By default, do nothing.
 myStartupHook = do
-    spawnOnce "feh --bg-scale --bg-fill ~/Main/Documents/wallpapers/hqNv97S.png &"
+--    spawnOnce "feh --bg-scale --bg-fill ~/Main/Documents/wallpapers/hqNv97S.png &"
     spawnOnce "picom &"
+    spawnOnce "pacwall -u -g &"
     spawnOnce "flameshot &"
     spawnOnce "eww daemon &"
     spawnOnce "emacs --daemon &"
-    spawn "xsetroot -cursor_name LyraS-cursors &"
-
 
 ------------------------------------------------------------------------
 -- Now run xmonad with all the defaults we set up.
@@ -306,6 +305,8 @@ main = do
       layoutHook = avoidStruts $ layoutHook defaults,
       logHook = dynamicLogWithPP xmobarPP {
                   ppOutput = hPutStrLn xmobar0,
+                  ppCurrent = xmobarColor "red" "",
+                  ppVisible = xmobarColor "#555555" "",
                   ppTitle = xmobarColor "green" "" . shorten 50
                 }
     }

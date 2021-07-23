@@ -1,1 +1,0 @@
-printf $(uptime | awk '{printf $3}')
