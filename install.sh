@@ -21,7 +21,7 @@ install_programs() {
     cd discord && makepkg -sic && cd .. && rm -frvd discord
     # Wakatime
     sudo pip install wakatime
-    cp -vir config/wakatime/* $WAKATIME_HOME
+    cp -vi config/wakatime/.wakatime.cfg $WAKATIME_HOME/.wakatime.cfg
     systemctl enable sddm
     echo "Done installing programs"
 }
@@ -102,7 +102,7 @@ install_xmonad() {
     cd pacwall && makepkg -sic && cd .. && rm -frvd pacwall
     cp -vir config/pacwall/* ~/.config/pacwall/
     cp -vi config/rofi/main.rofi ~/.config/rofi/themes/main.rofi
-    cp -vir config/xmonad/* ~/.config/.xmonad
+    cp -vir config/xmonad/* ~/.config/.xmonad/
     cp -vir config/eww/* ~/.config/eww/
     cp -vi config/picom/arch_img.png ~/.config/picom/img/arch_img.png
     cp -vi config/picom/picom.conf ~/.config/picom/picom.conf
