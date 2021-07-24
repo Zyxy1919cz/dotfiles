@@ -6,7 +6,7 @@ make_dirs() {
     echo "Creating directories..."
     mkdir -vp ~/Main ~/Main/Devel ~/Main/Documents ~/Main/Downloads ~/Main/Git ~/Main/Docker ~/Main/Documents/org
     mkdir -vp ~/.config/.emacs.d ~/.config/.doom.d
-    mkdir -vp ~/.config/.zsh ~/.config/.xmonad ~/.config/rofi ~/.config/rofi/themes ~/.config/pacwall ~/.config/.wakatime
+    mkdir -vp ~/.config/.zsh ~/.config/.xmonad ~/.config/rofi ~/.config/rofi/themes ~/.config/tilix ~/.config/pacwall ~/.config/.wakatime
     mkdir -vp ~/.config/gtk-3.0
 }
 
@@ -66,7 +66,7 @@ install_zshell() {
     sudo pacman -Sv --noconfirm zsh zsh-completions tmux ranger npm yarn tilix
     git clone https://aur.archlinux.org/nvm.git nvm
     cd nvm && makepkg -sic && cd .. && rm -frdv nvm
-    cp -vir config/tilix/*
+    cp -vir config/tilix/* ~/.config/tilix/
     touch ~/.config/.zsh/.histfile
     chmod 666 ~/.config/.zsh/.histfile
     cp -vi config/zsh/.zshrc ~/.config/.zsh/.zshrc
