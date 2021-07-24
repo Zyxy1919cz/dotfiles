@@ -53,7 +53,7 @@ cp -iv $HOME/.config/.zsh/local_keys.zsh config/zsh
 cp -iv $HOME/.config/.zsh/zplug/packages.zsh config/zsh
 
 # Tilix config
-
+cp -ivr ~/.config/tilix/* config/tilix/
 
 # Rofi files
 cp -ivr ~/.config/rofi/* config/rofi/

@@ -66,7 +66,7 @@ install_zshell() {
     sudo pacman -Sv --noconfirm zsh zsh-completions tmux ranger npm yarn tilix
     git clone https://aur.archlinux.org/nvm.git nvm
     cd nvm && makepkg -sic && cd .. && rm -frdv nvm
-    cp -vir config/tilix
+    cp -vir config/tilix/*
     touch ~/.config/.zsh/.histfile
     chmod 666 ~/.config/.zsh/.histfile
     cp -vi config/zsh/.zshrc ~/.config/.zsh/.zshrc
