@@ -6,14 +6,14 @@ make_dirs() {
     echo "Creating directories..."
     mkdir -vp ~/Main ~/Main/Devel ~/Main/Documents ~/Main/Downloads ~/Main/Git ~/Main/Docker ~/Main/Documents/org
     mkdir -vp ~/.config/.emacs.d ~/.config/.doom.d
-    mkdir -vp ~/.config/.zsh ~/.config/.xmonad ~/.config/rofi ~/.config/rofi/themes ~/.config/pacwall ~/.config/pacwall/img ~/.config/.wakatime
+    mkdir -vp ~/.config/.zsh ~/.config/.xmonad ~/.config/rofi ~/.config/rofi/themes ~/.config/pacwall ~/.config/.wakatime
     mkdir -vp ~/.config/gtk-3.0
 }
 
 install_programs() {
     echo "(1/ ) Installing programs..."
     # Development packages
-    sudo pacman -Sv --noconfirm git base-devel sddm qt5-graphicaleffects docker docker-compose gulp electron python python-pip rustup
+    sudo pacman -Sv --noconfirm git base-devel sddm brightnessctl pulseaudio alsa-utils pulseaudio-alsa pulseaudio-equalizer pulseaudio-jack qt5-graphicaleffects docker docker-compose gulp electron python python-pip nemo nemo-terminal rustup
     sudo rustup self upgrade-data
     # Applications
     sudo pacman -Sv --noconfirm flameshot firefox
@@ -100,17 +100,12 @@ install_xmonad() {
     git clone https://aur.archlinux.org/picom-rounded-corners.git picom
     cd picom && makepkg -sic && cd .. && rm -frvd picom
     cd pacwall && makepkg -sic && cd .. && rm -frvd pacwall
+    cp -vir config/pacwall/* ~/.config/pacwall/
     cp -vi config/rofi/main.rofi ~/.config/rofi/themes/main.rofi
-    cp -vi config/xmonad/xmonad.hs ~/.config/.xmonad
-    cp -vi config/xmonad/xmobarrc0 ~/.config/.xmonad
+    cp -vir config/xmonad/* ~/.config/.xmonad
     cp -vir config/eww/* ~/.config/eww/
     cp -vi config/picom/arch_img.png ~/.config/picom/img/arch_img.png
     cp -vi config/picom/picom.conf ~/.config/picom/picom.conf
-    sudo tee -a ~/.config/rofi/config.rasi <<EOF
-configuration {
-              theme: "~/.config/rofi/themes/main.rofi";
-}
-EOF
     echo "Done"
 }
 
@@ -125,6 +120,7 @@ install_pass() {
     cd pass-tomb && makepkg -sci && cd .. && rm -frvd pass-tomb
     gpg --delete-keys Denis Pujol
     echo "Done"
+    zsh && doom install && doom sync
 }
 
 make_dirs

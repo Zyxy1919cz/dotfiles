@@ -25,9 +25,9 @@ then
                         if [ ! -d "config/wakatime" ]
                         then
                             mkdir  config/wakatime
-                            if [ ! -d "config/termite" ]
+                            if [ ! -d "config/tilix" ]
                             then
-                                mkdir config/termite
+                                mkdir config/tilix
                                 if [ ! -d config/doom ]
                                 then
                                     mkdir config/doom
@@ -52,11 +52,11 @@ cp -iv $HOME/.config/.zsh/local_scripts.zsh config/zsh
 cp -iv $HOME/.config/.zsh/local_keys.zsh config/zsh
 cp -iv $HOME/.config/.zsh/zplug/packages.zsh config/zsh
 
-# Termite config
-cp -iv ~/.config/termite/config config/termite/config
+# Tilix config
+
 
 # Rofi files
-cp -iv ~/.config/rofi/themes/main.rofi config/rofi/main.rofi
+cp -ivr ~/.config/rofi/* config/rofi/
 
 # Eww files
 cp -ivr ~/.config/eww/* config/eww/
@@ -72,7 +72,7 @@ cp -iv ~/.config/picom/picom.conf config/picom/picom.conf
 cp -ivr ~/.config/.doom.d/* config/doom/
 
 # Pacwall config
-cp -iv ~/.config/pacwall/pacwall.conf config/pacwall/pacwall.conf
+cp -ivr ~/.config/pacwall/* config/pacwall/
 
 # Wakatime config
 cp -ivr ~/.config/.wakatime/* config/wakatime/

@@ -26,7 +26,7 @@ myFont :: String
 myFont = "RobotoMono"
 
 myTerminal      :: String
-myTerminal      = "termite"
+myTerminal      = "tilix"
 
 myEditor :: String
 myEditor = "emacsclient -c -a 'emacs'"
@@ -83,8 +83,8 @@ myFocusedBorderColor = "#ff0000"
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- Volume control
-    [ ((0                 , xF86XK_AudioRaiseVolume), spawn "amixer -q sset Master 2%+")
-    , ((0                 , xF86XK_AudioLowerVolume), spawn "amixer -q sset Master 2%-")
+    [ ((0                 , xF86XK_AudioRaiseVolume), spawn "amixer -q sset Master 4%+")
+    , ((0                 , xF86XK_AudioLowerVolume), spawn "amixer -q sset Master 4%-")
     , ((0                 , xF86XK_AudioMute    )   , spawn "amixer set Master toggle")
 
     -- Brightness control
