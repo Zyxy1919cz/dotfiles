@@ -73,7 +73,7 @@ install_zshell() {
     cp -vi config/zsh/local_aliases.zsh ~/.config/.zsh/local_aliases.zsh
     cp -vi config/zsh/local_scripts.zsh ~/.config/.zsh/local_scripts.zsh
     cp -vi config/zsh/local_keys.zsh ~/.config/.zsh/local_keys.zsh
-    tee -a /etc/zsh/zshenv <<EOF
+    sudo tee -a /etc/zsh/zshenv <<EOF
 # Setting environment variables
 export ZDOTDIR=~/.config/.zsh
 export ZPLUG_HOME=~/.config/.zsh/zplug
