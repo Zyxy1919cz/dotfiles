@@ -5,9 +5,28 @@ set -euo pipefail
 make_dirs() {
     echo "Creating directories..."
     mkdir -vp ~/Main ~/Main/Devel ~/Main/Documents ~/Main/Downloads ~/Main/Git ~/Main/Docker ~/Main/Documents/org
-    mkdir -vp ~/.config/.emacs.d ~/.config/.doom.d
-    mkdir -vp ~/.config/.zsh ~/.config/picom ~/.config/.xmonad ~/.config/rofi ~/.config/rofi/themes ~/.config/tilix ~/.config/pacwall ~/.config/.wakatime ~/.config/eww
+    mkdir -vp ~/.config/.emacs ~/.config/.doom
+    mkdir -vp ~/.config/.zsh ~/.config/picom ~/.config/.xmonad ~/.config/rofi ~/.config/rofi/themes ~/.config/tilix ~/.config/pacwall ~/.config/.wakatime ~/.config/eww ~/.config/polybar
     mkdir -vp ~/.config/gtk-3.0
+}
+
+copy_dirs() {
+    cp -vir config/pacwall/* ~/.config/pacwall/
+    cp -vir config/rofi/* ~/.config/rofi/
+    cp -vir config/xmonad/* $XMONAD_CONFIG_DIR/
+    cp -vir config/eww/* ~/.config/eww/
+    cp -vi config/picom/picom.conf ~/.config/picom/picom.conf
+    cp -vi config/wakatime/.wakatime.cfg $WAKATIME_HOME/.wakatime.cfg
+    cp -vir config/doom/* $DOOMDIR/
+    cp -vir config/tilix/* ~/.config/tilix/
+    cp -vir config/polybar/* ~/.config/polybar/
+    
+    # ZShell config
+    cp -vi config/zsh/.zshrc ~/.config/.zsh/.zshrc
+    cp -vi config/zsh/local_aliases.zsh ~/.config/.zsh/local_aliases.zsh
+    cp -vi config/zsh/local_scripts.zsh ~/.config/.zsh/local_scripts.zsh
+    cp -vi config/zsh/local_keys.zsh ~/.config/.zsh/local_keys.zsh
+    cp -iv config/zsh/packages.zsh ~/.config/.zsh/zplug/packages.zsh
 }
 
 install_programs() {
@@ -21,7 +40,6 @@ install_programs() {
     cd discord && makepkg -sic && cd .. && rm -frvd discord
     # Wakatime
     sudo pip install wakatime
-    cp -vi config/wakatime/.wakatime.cfg $WAKATIME_HOME/.wakatime.cfg
     systemctl enable sddm
     echo "Done installing programs"
 }
@@ -55,8 +73,7 @@ EOF
 install_emacs() {
     echo "(6/ ) Installing Emacs..."
     sudo pacman -Sv --noconfirm ripgrep emacs
-    git clone https://github.com/hlissner/doom-emacs ~/.config/.emacs.d
-    cp -vir config/doom/* ~/.config/.doom.d/
+    git clone https://github.com/hlissner/doom-emacs ~/.config/.emacs
     echo "Done"
 }
 
@@ -65,18 +82,13 @@ install_zshell() {
     sudo pacman -Sv --noconfirm zsh zsh-completions tmux ranger npm yarn tilix
     git clone https://aur.archlinux.org/nvm.git nvm
     cd nvm && makepkg -sic && cd .. && rm -frdv nvm
-    cp -vir config/tilix/* ~/.config/tilix/
     touch ~/.config/.zsh/.histfile
     chmod 666 ~/.config/.zsh/.histfile
-    cp -vi config/zsh/.zshrc ~/.config/.zsh/.zshrc
-    cp -vi config/zsh/local_aliases.zsh ~/.config/.zsh/local_aliases.zsh
-    cp -vi config/zsh/local_scripts.zsh ~/.config/.zsh/local_scripts.zsh
-    cp -vi config/zsh/local_keys.zsh ~/.config/.zsh/local_keys.zsh
     sudo tee -a /etc/zsh/zshenv <<EOF
 # Setting environment variables
 export ZDOTDIR=~/.config/.zsh
 export ZPLUG_HOME=~/.config/.zsh/zplug
-export DOOMDIR=~/.config/.doom.d
+export DOOMDIR=~/.config/.doom
 export XMONAD_CONFIG_DIR=~/.config/.xmonad
 export XMONAD_DATA_DIR=~/.config/.xmonad
 export XMONAD_CACHE_DIR=~/.config/.xmonad
@@ -86,7 +98,6 @@ export PASSWORD_STORE_TOMB_KEY=~/.pass/.password.key.tomb
 export GNUPGHOME=~/.config/.gnupg
 EOF
     git clone https://github.com/zplug/zplug $ZPLUG_HOME
-    cp -iv config/zsh/packages.zsh ~/.config/.zsh/zplug/packages.zsh
     source /etc/zsh/zshenv
     echo "Done"
 }
@@ -95,15 +106,12 @@ install_xmonad() {
     echo "(  ) Installing Xmonad"
     sudo pacman -Sv --noconfirm xmonad xmonad-contrib rofi xmobar
     sudo pacman -Sv --noconfirm --needed hsetroot
+    git clone https://aur.archlinux.org/polybar.git polybar
     git clone https://aur.archlinux.org/pacwall-git.git pacwall
     git clone https://aur.archlinux.org/picom-rounded-corners.git picom
     cd picom && makepkg -sic && cd .. && rm -frvd picom
     cd pacwall && makepkg -sic && cd .. && rm -frvd pacwall
-    cp -vir config/pacwall/* ~/.config/pacwall/
-    cp -vir config/rofi/* ~/.config/rofi/
-    cp -vir config/xmonad/* ~/.config/.xmonad/
-    cp -vir config/eww/* ~/.config/eww/
-    cp -vi config/picom/picom.conf ~/.config/picom/picom.conf
+    cd polybar && makepkg -sic && cd .. && rm -frvd polybar
     echo "Done"
 }
 
@@ -122,6 +130,7 @@ install_pass() {
 
 make_dirs
 install_zshell
+copy_dirs
 install_programs
 install_visuals
 install_emacs

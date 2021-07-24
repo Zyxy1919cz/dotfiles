@@ -34,6 +34,10 @@ then
                                     if [ ! -d config/eww ]
                                     then
                                         mkdir config/eww
+                                        if [ ! -d config/polybar]
+                                        then
+                                        mkdir config/polybar
+                                        if
                                     fi
                                 fi
                             fi
@@ -76,5 +80,8 @@ cp -ivr ~/.config/pacwall/* config/pacwall/
 
 # Wakatime config
 cp -ivr ~/.config/.wakatime/* config/wakatime/
+
+# Polybar config
+cp -ivr ~/.config/polybar/* config/polybar/
 
 echo "Done"
