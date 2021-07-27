@@ -32,10 +32,10 @@ copy_dirs() {
 install_programs() {
     echo "(1/ ) Installing programs..."
     # Development packages
-    sudo pacman -Sv --noconfirm git base-devel sddm brightnessctl pulseaudio alsa-utils pulseaudio-alsa pulseaudio-equalizer pulseaudio-jack qt5-graphicaleffects docker docker-compose gulp electron python python-pip nemo nemo-terminal rustup
+    sudo pacman -Sv git base-devel sddm brightnessctl pulseaudio alsa-utils pulseaudio-alsa pulseaudio-equalizer pulseaudio-jack qt5-graphicaleffects docker docker-compose gulp electron python python-pip nemo nemo-terminal rustup
     sudo rustup self upgrade-data
     # Applications
-    sudo pacman -Sv --noconfirm flameshot firefox
+    sudo pacman -Sv flameshot firefox
     git clone https://aur.archlinux.org/discord_arch_electron.git discord
     cd discord && makepkg -sic && cd .. && rm -frvd discord
     # Wakatime
@@ -53,14 +53,12 @@ install_visuals() {
     echo "Done"
     echo "(3/ ) Installing Cursor..."
     git clone https://github.com/yeyushengfan258/Lyra-Cursors.git Lyra
-    cd lyra && sudo ./install.sh && cd .. && rm -fdrv Lyra
-    sudo tee -a /usr/share/icons/default/index.theme <<EOF
-[Icon Theme]
-Inherits=LyraS-cursors
-EOF
-    sudo tee -a ~/.config/gtk-3.0/settings.ini <<EOF
+    cd Lyra && sudo ./install.sh && cd .. && rm -fdrv Lyra
+    sudo tee -a /etc/gtk-3.0/settings.ini <<EOF
 [Settings]
-gtk-cursor-theme-name=LyraS-cursors
+gtk-cursor-theme-name=LyraR-cursors
+gtk-font-name = Meslo LG M 11
+gtk-application-prefer-dark-theme = true
 EOF
     echo "Done installing cursors"
     echo "(4/ ) Installing Visuals..."
@@ -72,14 +70,14 @@ EOF
 
 install_emacs() {
     echo "(6/ ) Installing Emacs..."
-    sudo pacman -Sv --noconfirm ripgrep emacs
+    sudo pacman -Sv ripgrep emacs
     git clone https://github.com/hlissner/doom-emacs ~/.config/.emacs
     echo "Done"
 }
 
 install_zshell() {
     echo "(1/ ) Installing ZShell..."
-    sudo pacman -Sv --noconfirm zsh zsh-completions tmux ranger npm yarn tilix
+    sudo pacman -Sv zsh zsh-completions tmux ranger npm yarn tilix
     git clone https://aur.archlinux.org/nvm.git nvm
     cd nvm && makepkg -sic && cd .. && rm -frdv nvm
     touch ~/.config/.zsh/.histfile
@@ -88,6 +86,8 @@ install_zshell() {
 # Setting environment variables
 export ZDOTDIR=~/.config/.zsh
 export ZPLUG_HOME=~/.config/.zsh/zplug
+export EMACSDIR=~/.config/.emacs
+export DOOMLOCALDIR=~/.config/.emacs
 export DOOMDIR=~/.config/.doom
 export XMONAD_CONFIG_DIR=~/.config/.xmonad
 export XMONAD_DATA_DIR=~/.config/.xmonad
@@ -97,15 +97,15 @@ export PASSWORD_STORE_TOMB_FILE=~/.pass/.password.tomb
 export PASSWORD_STORE_TOMB_KEY=~/.pass/.password.key.tomb
 export GNUPGHOME=~/.config/.gnupg
 EOF
-    git clone https://github.com/zplug/zplug $ZPLUG_HOME
     source /etc/zsh/zshenv
+    git clone https://github.com/zplug/zplug $ZPLUG_HOME
     echo "Done"
 }
 
 install_xmonad() {
     echo "(  ) Installing Xmonad"
-    sudo pacman -Sv --noconfirm xmonad xmonad-contrib rofi xmobar
-    sudo pacman -Sv --noconfirm --needed hsetroot
+    sudo pacman -Sv xmonad xmonad-contrib rofi xmobar
+    sudo pacman -Sv --needed hsetroot
     git clone https://aur.archlinux.org/polybar.git polybar
     git clone https://aur.archlinux.org/pacwall-git.git pacwall
     git clone https://aur.archlinux.org/picom-rounded-corners.git picom
@@ -117,7 +117,7 @@ install_xmonad() {
 
 install_pass() {
     echo "(  ) Installing pass"
-    sudo pacman -Sv --noconfirm xclip gnupg openssh pass pinentry
+    sudo pacman -Sv xclip gnupg openssh pass pinentry
     git clone https://aur.archlinux.org/tomb.git tomb
     git clone https://aur.archlinux.org/pass-tomb.git pass-tomb
     curl https://keybase.io/jaromil/pgp_keys.asc | gpg --import
@@ -144,8 +144,9 @@ zsh
 doom install && doom sync && doom doctor
 Append those files
 
-/etc/default/grub
-GRUB_THEME=/boot/grub/themes/Atomic/theme.txt
+/usr/share/icons/default/index.theme
+[Icon Theme]
+Inherits=LyraR-cursors
 
 usr/lib/sddm/sddm.conf.d/default.conf
 Current=sddm-slice

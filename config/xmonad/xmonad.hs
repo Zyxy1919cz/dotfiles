@@ -18,6 +18,7 @@ import XMonad.Layout.Spacing
 -- UTILS
 import XMonad.Util.SpawnOnce
 import XMonad.Util.Run
+import XMonad.Util.Cursor
 
 import qualified XMonad.StackSet as W
 
@@ -285,7 +286,6 @@ myLogHook = dynamicLog
 --
 -- By default, do nothing.
 myStartupHook = do
---    spawnOnce "feh --bg-scale --bg-fill ~/Main/Documents/wallpapers/hqNv97S.png &"
     spawnOnce "picom &"
     spawnOnce "pacwall -u -g &"
     spawnOnce "flameshot &"
@@ -301,6 +301,7 @@ main = do
   xmobar0 <- spawnPipe "xmobar -x 0 ~/.config/.xmonad/xmobarrc0"
 --  xmobar1 <- spawnPipe "xmobar -x 1 ~/.config/.xmonad/xmobarrc1"
   xmonad $ docks defaults {
+      startupHook = setDefaultCursor LyraR-cursors $ startupHook defaults,
       manageHook = manageDocks <+> manageHook defaults,
       layoutHook = avoidStruts $ layoutHook defaults,
       logHook = dynamicLogWithPP xmobarPP {

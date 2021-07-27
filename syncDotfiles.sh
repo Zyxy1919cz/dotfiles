@@ -28,13 +28,13 @@ then
                             if [ ! -d "config/tilix" ]
                             then
                                 mkdir config/tilix
-                                if [ ! -d config/doom ]
+                                if [ ! -d "config/doom" ]
                                 then
                                     mkdir config/doom
-                                    if [ ! -d config/eww ]
+                                    if [ ! -d "config/eww" ]
                                     then
                                         mkdir config/eww
-                                        if [ ! -d config/polybar]
+                                        if [ ! -d "config/polybar"]
                                         then
                                         mkdir config/polybar
                                         if

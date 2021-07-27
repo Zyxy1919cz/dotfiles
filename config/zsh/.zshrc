@@ -15,7 +15,7 @@ fpath=($HOME/.config/.zsh/zplug/repos/vifon/zranger $fpath)
 
 # Setting $PATH variable
 typeset -U PATH path
-path=("$HOME/.local/bin" "$HOME/.config/.emacs.d/bin" "$HOME/.bin" "$HOME/.cargo/bin"  "$path[@]")
+path=("$HOME/.local/bin" "$HOME/.config/.emacs/bin" "$HOME/.bin" "$HOME/.cargo/bin"  "$path[@]")
 export PATH
 
 # ZShell completion
@@ -30,8 +30,8 @@ bindkey -s '\ez' "\eq zranger\n"
 
 # ZSH Histfile config
 export HISTFILE=~/.config/.zsh/.histfile
-export HISTFILESIZE=1000000
-export HISTSIZE=1000000
+export HISTFILESIZE=100000
+export HISTSIZE=100000
 setopt INC_APPEND_HISTORY
 export HISTTIMEFORMAT="[%F %T] "
 setopt EXTENDED_HISTORY
@@ -40,10 +40,6 @@ setopt HIST_IGNORE_ALL_DUPS
 # Source local scripts
 source ~/.config/.zsh/zplug/init.zsh
 source /usr/share/nvm/init-nvm.sh
-
-# Source Node.js version manager
-export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
 # Source MY local scripts
 source ~/.config/.zsh/local_aliases.zsh
