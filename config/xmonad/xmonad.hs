@@ -269,8 +269,7 @@ myStartupHook = do
 -- Now run xmonad with all the defaults we set up.
 
 main = do
-forM_ [".xmonad-workspace-log", ".xmonad-title-log"] $ \file -> do
-    safeSpawn "mkfifo" ["/tmp/" ++ file]
+  forM_ [".xmonad-workspace-log", ".xmonad-title-log"] $ \file -> safeSpawn "mkfifo" ["/tmp/" ++ file]
 
   xmonad $ docks defaults {
       startupHook = setDefaultCursor LyraR-cursors $ startupHook defaults,
