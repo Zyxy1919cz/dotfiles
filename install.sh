@@ -71,7 +71,9 @@ EOF
 install_emacs() {
     echo "(6/ ) Installing Emacs..."
     sudo pacman -Sv ripgrep emacs
-    git clone https://github.com/hlissner/doom-emacs ~/.config/.emacs
+    git clone https://github.com/hlissner/doom-emacs ~/.emacs.d
+    ~/.emacs.d/bin/doom install
+    ~/.emacs.d/bin/doom sync
     echo "Done"
 }
 
@@ -86,8 +88,8 @@ install_zshell() {
 # Setting environment variables
 export ZDOTDIR=~/.config/.zsh
 export ZPLUG_HOME=~/.config/.zsh/zplug
-export EMACSDIR=~/.config/.emacs
-export DOOMLOCALDIR=~/.config/.emacs
+export EMACSDIR=~/.emacs.d
+export DOOMLOCALDIR=~/.emacs.d
 export DOOMDIR=~/.config/.doom
 export XMONAD_CONFIG_DIR=~/.config/.xmonad
 export XMONAD_DATA_DIR=~/.config/.xmonad
@@ -104,7 +106,7 @@ EOF
 
 install_xmonad() {
     echo "(  ) Installing Xmonad"
-    sudo pacman -Sv xmonad xmonad-contrib rofi xmobar
+    sudo pacman -Sv xmonad xmonad-contrib rofi
     sudo pacman -Sv --needed hsetroot
     git clone https://aur.archlinux.org/polybar.git polybar
     git clone https://aur.archlinux.org/pacwall-git.git pacwall
@@ -137,20 +139,22 @@ install_emacs
 install_xmonad
 install_pass
 
-cat <<EOF
+tee -a ~/install.txt <<EOF
 Installation done
 run afterwards
 zsh
-doom install && doom sync && doom doctor
 Append those files
 
 /usr/share/icons/default/index.theme
 [Icon Theme]
 Inherits=LyraR-cursors
 
-usr/lib/sddm/sddm.conf.d/default.conf
+/usr/lib/sddm/sddm.conf.d/default.conf
 Current=sddm-slice
-CursorTheme=LyraS-cursors
+CursorTheme=LyraR-cursors
+
+/usr/share/sddm/scripts/Xsession
+xsetroot -cursor_name LyraR-cursors
 
 Install zranger
 EOF
