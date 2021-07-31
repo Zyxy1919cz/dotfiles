@@ -27,6 +27,7 @@ copy_dirs() {
     cp -vi config/zsh/local_scripts.zsh ~/.config/.zsh/local_scripts.zsh
     cp -vi config/zsh/local_keys.zsh ~/.config/.zsh/local_keys.zsh
     cp -iv config/zsh/packages.zsh ~/.config/.zsh/zplug/packages.zsh
+    cp -iv config/zsh/.p10k.zsh ~/.config/.zsh/.p10k.zsh
 }
 
 install_programs() {
@@ -37,7 +38,9 @@ install_programs() {
     # Applications
     sudo pacman -Sv flameshot firefox
     git clone https://aur.archlinux.org/discord_arch_electron.git discord
+    git clone https://aur.archlinux.org/vscodium-git.git vscode
     cd discord && makepkg -sic && cd .. && rm -frvd discord
+    cd vscode && makepkg -sic && cd .. && rm -frvd vscode
     # Wakatime
     sudo pip install wakatime
     systemctl enable sddm
@@ -110,7 +113,7 @@ install_xmonad() {
     sudo pacman -Sv --needed hsetroot
     git clone https://aur.archlinux.org/polybar.git polybar
     git clone https://aur.archlinux.org/pacwall-git.git pacwall
-    git clone https://aur.archlinux.org/picom-rounded-corners.git picom
+    git clone https://aur.archlinux.org/picom-jonaburg-git.git picom
     cd picom && makepkg -sic && cd .. && rm -frvd picom
     cd pacwall && makepkg -sic && cd .. && rm -frvd pacwall
     cd polybar && makepkg -sic && cd .. && rm -frvd polybar
@@ -127,7 +130,15 @@ install_pass() {
     cd tomb && makepkg -sci && cd .. && rm -frvd tomb
     cd pass-tomb && makepkg -sci && cd .. && rm -frvd pass-tomb
     gpg --delete-keys Denis Pujol
+    mkdir -vp ~/.pass
     echo "Done"
+}
+
+append_files () {
+    echo "Appending files..."
+    sudo sed -i 's/Adwaita/LyraR-cursors/g' /usr/share/icons/default/index.theme
+    sudo sed -i 's/Current=/Current=sddm-slice/g' /usr/lib/sddm/sddm.conf.d/default.conf
+    sudo sed -i 's/CursorTheme=/CursorTheme=LyraR-cursors/g' /usr/lib/sddm/sddm.conf.d/default.conf
 }
 
 make_dirs
@@ -137,21 +148,14 @@ install_programs
 install_visuals
 install_emacs
 install_xmonad
-install_pass
+install_pass 
+append_files
 
 tee -a ~/install.txt <<EOF
 Installation done
 run afterwards
 zsh
 Append those files
-
-/usr/share/icons/default/index.theme
-[Icon Theme]
-Inherits=LyraR-cursors
-
-/usr/lib/sddm/sddm.conf.d/default.conf
-Current=sddm-slice
-CursorTheme=LyraR-cursors
 
 /usr/share/sddm/scripts/Xsession
 xsetroot -cursor_name LyraR-cursors
