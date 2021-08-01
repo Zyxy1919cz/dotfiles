@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-
 make_dirs() {
     echo "Creating directories..."
     mkdir -vp ~/Main ~/Main/Devel ~/Main/Documents ~/Main/Downloads ~/Main/Git ~/Main/Docker ~/Main/Documents/org
     mkdir -vp ~/.config/.emacs ~/.config/.doom
-    mkdir -vp ~/.config/.zsh ~/.config/picom ~/.config/.xmonad ~/.config/rofi ~/.config/rofi/themes ~/.config/tilix ~/.config/pacwall ~/.config/.wakatime ~/.config/eww ~/.config/polybar
+    mkdir -vp ~/.config/.zsh ~/.config/picom ~/.config/.xmonad ~/.config/rofi ~/.config/rofi/themes ~/.config/tilix ~/.config/pacwall ~/.config/.wakatime ~/.config/eww ~/.config/polybar ~/.config/ranger ~/.bin
     mkdir -vp ~/.config/gtk-3.0
 }
 
@@ -20,7 +19,10 @@ copy_dirs() {
     cp -vir config/doom/* $DOOMDIR/
     cp -vir config/tilix/* ~/.config/tilix/
     cp -vir config/polybar/* ~/.config/polybar/
-    
+    cp -vir config/ranger/* ~/.config/ranger/
+    cp -vi config/vscode/product.json ~/.config/VSCodium/product.json
+    cp -vi config/vscode/settings.json ~/.config/VSCodium/User/settings.json
+
     # ZShell config
     cp -vi config/zsh/.zshrc ~/.config/.zsh/.zshrc
     cp -vi config/zsh/local_aliases.zsh ~/.config/.zsh/local_aliases.zsh
@@ -112,9 +114,13 @@ install_xmonad() {
     sudo pacman -Sv xmonad xmonad-contrib rofi
     sudo pacman -Sv --needed hsetroot
     git clone https://aur.archlinux.org/polybar.git polybar
+    git clone https://github.com/elkowar/eww eww
+    git clone https://aur.archlinux.org/dunst-git.git dunst
     git clone https://aur.archlinux.org/pacwall-git.git pacwall
     git clone https://aur.archlinux.org/picom-jonaburg-git.git picom
     cd picom && makepkg -sic && cd .. && rm -frvd picom
+    cd dunst && makepkg -sic && cd .. && rm -frvd dunst
+    cd eww && cargo build --release && cd target/release && cp eww ~/.bin/ && cd .. && cd .. && cd .. && rm -frvd eww
     cd pacwall && makepkg -sic && cd .. && rm -frvd pacwall
     cd polybar && makepkg -sic && cd .. && rm -frvd polybar
     echo "Done"
@@ -122,7 +128,7 @@ install_xmonad() {
 
 install_pass() {
     echo "(  ) Installing pass"
-    sudo pacman -Sv xclip gnupg openssh pass pinentry
+    sudo pacman -Sv xclip gnupg openssh pass pinentry gnome-keyring
     git clone https://aur.archlinux.org/tomb.git tomb
     git clone https://aur.archlinux.org/pass-tomb.git pass-tomb
     curl https://keybase.io/jaromil/pgp_keys.asc | gpg --import
@@ -134,7 +140,7 @@ install_pass() {
     echo "Done"
 }
 
-append_files () {
+append_files() {
     echo "Appending files..."
     sudo sed -i 's/Adwaita/LyraR-cursors/g' /usr/share/icons/default/index.theme
     sudo sed -i 's/Current=/Current=sddm-slice/g' /usr/lib/sddm/sddm.conf.d/default.conf
@@ -148,7 +154,7 @@ install_programs
 install_visuals
 install_emacs
 install_xmonad
-install_pass 
+install_pass
 append_files
 
 tee -a ~/install.txt <<EOF
@@ -156,9 +162,6 @@ Installation done
 run afterwards
 zsh
 Append those files
-
-/usr/share/sddm/scripts/Xsession
-xsetroot -cursor_name LyraR-cursors
 
 Install zranger
 EOF

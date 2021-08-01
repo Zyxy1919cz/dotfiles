@@ -28,6 +28,12 @@ import Control.Monad (forM_, join)
 myFont :: String
 myFont = "Meslo LG S"
 
+myEwwMain :: String
+myEwwMain = ""
+
+myEwwSide :: String
+myEwwMain = ""
+
 myTerminal      :: String
 myTerminal      = "tilix"
 
@@ -77,8 +83,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((0, xF86XK_MonBrightnessUp),   spawn "brightnessctl set +10%")
     , ((0, xF86XK_MonBrightnessDown), spawn "brightnessctl set 10%-")
 
-    -- Start Flameshot
-    --GUI
+    -- Start Flameshot GUI
     , ((modm              , xK_Print ), spawn "flameshot gui")
 
     , ((modm .|. shiftMask, xK_Print ), spawn "flameshot full -p ~/Main/Documents/")
@@ -91,6 +96,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- launch Doom emacs
     , ((modm .|. shiftMask, xK_d), spawn myEditor)
+
+    -- launch firefox 
+    , (modm .|. shiftMask, xK_f), spawn myBrowser)
 
     -- close focused window
     , ((modm .|. shiftMask, xK_c     ), kill)

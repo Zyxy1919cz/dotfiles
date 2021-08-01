@@ -1,0 +1,19 @@
+{
+    "git.autofetch": true,
+    "editor.fontSize": 12,
+    "editor.cursorStyle": "block-outline",
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.formatOnSave": true,
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.colorTheme": "Dracula",
+    "workbench.colorCustomizations": {
+        "statusBar.background": "#180404ff",
+        "statusBar.noFolderBackground": "#212121",
+        "statusBar.debuggingBackground": "#263238"
+    },
+    "window.menuBarVisibility": "toggle",
+    "window.dialogStyle": "custom",
+    "security.workspace.trust.banner": "always",
+    "security.workspace.trust.enabled": true,
+    "glassit.alpha": 150
+}

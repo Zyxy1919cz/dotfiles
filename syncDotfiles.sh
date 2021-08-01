@@ -3,41 +3,36 @@ set -euo pipefail
 
 echo "Synchronizing local dotfiles"
 
-if [ ! -d "config" ]
-then
+if [ ! -d "config" ]; then
     echo "Creating folders..."
     mkdir config
-    if [ ! -d "config/zsh" ]
-    then
+    if [ ! -d "config/zsh" ]; then
         mkdir config/zsh
-        if [ ! -d "config/rofi" ]
-        then
+        if [ ! -d "config/rofi" ]; then
             mkdir config/rofi
-            if [ ! -d "config/xmonad" ]
-            then
+            if [ ! -d "config/xmonad" ]; then
                 mkdir config/xmonad
-                if [ ! -d "config/picom" ]
-                then
+                if [ ! -d "config/picom" ]; then
                     mkdir config/picom
-                    if [ ! -d "config/pacwall" ]
-                    then
+                    if [ ! -d "config/pacwall" ]; then
                         mkdir config/pacwall
-                        if [ ! -d "config/wakatime" ]
-                        then
-                            mkdir  config/wakatime
-                            if [ ! -d "config/tilix" ]
-                            then
+                        if [ ! -d "config/wakatime" ]; then
+                            mkdir config/wakatime
+                            if [ ! -d "config/tilix" ]; then
                                 mkdir config/tilix
-                                if [ ! -d "config/doom" ]
-                                then
+                                if [ ! -d "config/doom" ]; then
                                     mkdir config/doom
-                                    if [ ! -d "config/eww" ]
-                                    then
+                                    if [ ! -d "config/eww" ]; then
                                         mkdir config/eww
-                                        if [ ! -d "config/polybar"]
-                                        then
-                                        mkdir config/polybar
-                                        if
+                                        if [ ! -d "config/polybar"]; then
+                                            mkdir config/polybar
+                                            if [ ! -d "config/vscode"]; then
+                                                mkdir config/vscode
+                                                if [ ! -d "config/ranger"]; then
+                                                    mkdir config/ranger
+                                                fi
+                                            fi
+                                        fi
                                     fi
                                 fi
                             fi
@@ -83,5 +78,13 @@ cp -ivr ~/.config/.wakatime/* config/wakatime/
 
 # Polybar config
 cp -ivr ~/.config/polybar/* config/polybar/
+
+# Vscode config
+cp -ivr ~/.config/VSCodium/product.json config/vscode/product.json
+cp -ivr ~/.config/VSCodium/User/settings.json config/vscode/settings.json
+
+# Ranger configuration
+cp -ivr ~/.config/ranger/commands.py config/ranger/commands.py
+cp -ivr ~/.config/ranger/rc.conf config/ranger/rc.conf
 
 echo "Done"
