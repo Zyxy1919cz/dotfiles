@@ -5,7 +5,7 @@ make_dirs() {
     echo "Creating directories..."
     mkdir -vp ~/Main ~/Main/Devel ~/Main/Documents ~/Main/Downloads ~/Main/Git ~/Main/Docker ~/Main/Documents/org
     mkdir -vp ~/.config/.emacs ~/.config/.doom
-    mkdir -vp ~/.config/.zsh ~/.config/picom ~/.config/.xmonad ~/.config/rofi ~/.config/rofi/themes ~/.config/tilix ~/.config/pacwall ~/.config/.wakatime ~/.config/eww ~/.config/polybar ~/.config/ranger ~/.bin
+    mkdir -vp ~/.config/.zsh ~/.config/picom ~/.config/.xmonad ~/.config/rofi ~/.config/rofi/themes ~/.config/tilix ~/.config/pacwall ~/.config/.wakatime ~/.config/eww ~/.config/polybar ~/.config/ranger
     mkdir -vp ~/.config/gtk-3.0
 }
 
@@ -114,13 +114,13 @@ install_xmonad() {
     sudo pacman -Sv xmonad xmonad-contrib rofi
     sudo pacman -Sv --needed hsetroot
     git clone https://aur.archlinux.org/polybar.git polybar
-    git clone https://github.com/elkowar/eww eww
+    git clone https://aur.archlinux.org/eww-git.git eww
     git clone https://aur.archlinux.org/dunst-git.git dunst
     git clone https://aur.archlinux.org/pacwall-git.git pacwall
     git clone https://aur.archlinux.org/picom-jonaburg-git.git picom
     cd picom && makepkg -sic && cd .. && rm -frvd picom
     cd dunst && makepkg -sic && cd .. && rm -frvd dunst
-    cd eww && cargo build --release && cd target/release && cp eww ~/.bin/ && cd .. && cd .. && cd .. && rm -frvd eww
+    cd eww && makepkg -sic && cd .. && rm -frvd eww
     cd pacwall && makepkg -sic && cd .. && rm -frvd pacwall
     cd polybar && makepkg -sic && cd .. && rm -frvd polybar
     echo "Done"
