@@ -1,0 +1,147 @@
+;;-----------------------------------------------
+[module/workspaces-xmonad]
+type = custom/script
+exec = tail -F /tmp/.xmonad-workspace-log
+exec-if = [ -p /tmp/.xmonad-workspace-log ]
+tail = true
+
+;;-----------------------------------------------
+[module/update-packages]
+type = custom/script
+exec = ~/.config/polybar/scripts/update_packages.sh
+interval = 10
+
+format = <label>
+format-background = ${colors.background_alt}
+format-foreground = ${colors.foreground}
+format-overline = ${colors.background}
+format-underline = ${colors.background}
+format-padding = 2
+
+label = %output%
+
+;;-----------------------------------------------
+[module/vpn-status]
+type = custom/script
+exec = ~/.config/polybar/scripts/vpn-status.sh
+interval = 20
+
+format = <label>
+format-background = ${colors.background_alt}
+format-foreground = ${colors.foreground}
+format-overline = ${colors.background}
+format-underline = ${colors.background}
+format-padding = 2
+
+label = " %{T1}%output%"
+
+;;-----------------------------------------------
+[module/uptime]
+type = custom/script
+exec = uptime | awk -F, '{sub(".*up ",x,$1);print $1}'
+interval = 60
+
+format = <label>
+format-prefix = " "
+format-background = ${colors.background_alt}
+format-foreground = ${colors.foreground}
+format-overline = ${colors.background}
+format-underline = ${colors.background}
+format-padding = 1
+format-margin = 1
+
+label = %{T1}%{F#3ea832}%output% %{F-}%{T-}
+
+;;-----------------------------------------------
+[module/powermenu]
+type = custom/menu
+
+format-padding = 5
+
+label-open = open
+label-close = close
+
+menu-0-0 = Reboot
+menu-0-0-foreground = #fba922
+menu-0-0-exec = menu_open-1
+menu-0-1 = Power off
+menu-0-1-foreground = #fba922
+menu-0-1-exec = menu_open-2
+
+menu-1-0 = Cancel
+menu-1-0-foreground = #fba922
+menu-1-0-exec = menu_open-0
+menu-1-1 = Reboot
+menu-1-1-foreground = #fba922
+menu-1-1-exec = sudo reboot
+
+menu-2-0 = Power off
+menu-2-0-foreground = #fba922
+menu-2-0-exec = sudo shutdown now
+menu-2-1 = Cancel
+menu-2-1-foreground = #fba922
+menu-2-1-exec = menu_open-0
+
+;;-----------------------------------------------
+[module/space-main]
+type = custom/text
+
+content-background = ${colors.background}
+content-foreground = ${colors.foreground}
+
+[module/space-1]
+inherit = module/space-main
+content = " "
+
+[module/space-2]
+inherit = module/space-main
+content = "  "
+
+;;-----------------------------------------------
+[module/brightnessctl]
+type = custom/script
+
+exec = brightnessctl | grep % | awk '{print $4}' | sed 's/[()]//g'
+interval = 5
+
+format = <label>
+format-background = ${colors.background_alt}
+format-foreground = ${colors.foreground}
+format-overline = ${colors.background}
+format-underline = ${colors.background}
+format-padding = 2
+
+lable = %{T1}%output%
+
+[module/memory]
+type = custom/script
+
+exec = df -h | grep data | awk '{print $4}'
+interval = 3600
+
+format = <label>
+format-prefix = " "
+format-background = ${colors.background_alt}
+format-foreground = ${colors.foreground}
+format-overline = ${colors.background}
+format-underline = ${colors.background}
+format-padding = 2
+
+lable = %{T1}%output%
+
+[module/packages]
+type = custom/script
+
+exec = echo $(($(pacman -Qm | wc -l) + $(pacman -Qe | wc -l)))
+
+interval = 3600
+
+format = <label>
+format-prefix = " "
+format-background = ${colors.background_alt}
+format-foreground = ${colors.foreground}
+format-overline = ${colors.background}
+format-underline = ${colors.background}
+format-padding = 2
+
+lable = %{T1}%output%

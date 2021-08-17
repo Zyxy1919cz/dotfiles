@@ -1,25 +1,29 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+WDIR='pwd'
+CDIR="$HOME/.config"
+
 make_dirs() {
     echo "Creating directories..."
     mkdir -vp ~/Main ~/Main/Devel ~/Main/Documents ~/Main/Downloads ~/Main/Git ~/Main/Docker ~/Main/Documents/org
-    mkdir -vp ~/.config/.emacs ~/.config/.doom
+    mkdir -vp ~/.config/.doom
     mkdir -vp ~/.config/.zsh ~/.config/picom ~/.config/.xmonad ~/.config/rofi ~/.config/rofi/themes ~/.config/tilix ~/.config/pacwall ~/.config/.wakatime ~/.config/eww ~/.config/polybar ~/.config/ranger
-    mkdir -vp ~/.config/gtk-3.0
+    mkdir -vp ~/.config/gtk-3.0 ~/.config/dunst
 }
 
 copy_dirs() {
-    cp -vir config/pacwall/* ~/.config/pacwall/
-    cp -vir config/rofi/* ~/.config/rofi/
+    cp -vir config/rofi/* $ROFIDIR/
     cp -vir config/xmonad/* $XMONAD_CONFIG_DIR/
-    cp -vir config/eww/* ~/.config/eww/
-    cp -vi config/picom/picom.conf ~/.config/picom/picom.conf
+    cp -vir config/eww/* $EWWDIR/
+    cp -vir config/polybar/* $POLYBARDDIR/
+    cp -vir config/ranger/* $RANGERDIR/
     cp -vi config/wakatime/.wakatime.cfg $WAKATIME_HOME/.wakatime.cfg
     cp -vir config/doom/* $DOOMDIR/
+    cp -vir config/pacwall/* ~/.config/pacwall/
+    cp -vir config/dunst/* ~/.config/dunst/
+    cp -vi config/picom/picom.conf ~/.config/picom/picom.conf
     cp -vir config/tilix/* ~/.config/tilix/
-    cp -vir config/polybar/* ~/.config/polybar/
-    cp -vir config/ranger/* ~/.config/ranger/
     cp -vi config/vscode/product.json ~/.config/VSCodium/product.json
     cp -vi config/vscode/settings.json ~/.config/VSCodium/User/settings.json
 
@@ -35,13 +39,17 @@ copy_dirs() {
 install_programs() {
     echo "(1/ ) Installing programs..."
     # Development packages
-    sudo pacman -Sv git base-devel sddm brightnessctl pulseaudio alsa-utils pulseaudio-alsa pulseaudio-equalizer pulseaudio-jack qt5-graphicaleffects docker docker-compose gulp electron python python-pip nemo nemo-terminal rustup
+    sudo pacman -Sv git base-devel sddm brightnessctl pulseaudio{,-alsa,-equalizer,-jack} alsa-utils qt5-graphicaleffects docker{,-compose} gulp electron python{,-pip} nemo{,-terminal} rustup ttf-ionicons
     sudo rustup self upgrade-data
     # Applications
-    sudo pacman -Sv flameshot firefox
+    sudo pacman -Sv flameshot firefox gimp
     git clone https://aur.archlinux.org/discord_arch_electron.git discord
     git clone https://aur.archlinux.org/vscodium-git.git vscode
+    git clone https://aur.archlinux.org/auracle-git.git aur
+    git clone https://aur.archlinux.org/pacaur.git pacaur
     cd discord && makepkg -sic && cd .. && rm -frvd discord
+    cd aur && makepkg -sic && cd .. && rm -frvd aur
+    cd pacaur && makepkg -sic && cd .. && rm -frvd pacaur
     cd vscode && makepkg -sic && cd .. && rm -frvd vscode
     # Wakatime
     sudo pip install wakatime
@@ -84,13 +92,17 @@ install_emacs() {
 
 install_zshell() {
     echo "(1/ ) Installing ZShell..."
-    sudo pacman -Sv zsh zsh-completions tmux ranger npm yarn tilix
+    sudo pacman -Sv zsh{,-completions} tmux ranger npm yarn tilix
     git clone https://aur.archlinux.org/nvm.git nvm
     cd nvm && makepkg -sic && cd .. && rm -frdv nvm
     touch ~/.config/.zsh/.histfile
     chmod 666 ~/.config/.zsh/.histfile
     sudo tee -a /etc/zsh/zshenv <<EOF
-# Setting environment variables
+# Path to config environment variables
+export ROFIDIR=~/.config/rofi
+export RANGERDIR=~/.config/ranger
+export EWWDIR=~/.config/
+export POLYBARDDIR=~/.config/polybar
 export ZDOTDIR=~/.config/.zsh
 export ZPLUG_HOME=~/.config/.zsh/zplug
 export EMACSDIR=~/.emacs.d
@@ -100,9 +112,25 @@ export XMONAD_CONFIG_DIR=~/.config/.xmonad
 export XMONAD_DATA_DIR=~/.config/.xmonad
 export XMONAD_CACHE_DIR=~/.config/.xmonad
 export WAKATIME_HOME=~/.config/.wakatime
+export GNUPGHOME=~/.config/.gnupg
+
+# Setting environment variables
 export PASSWORD_STORE_TOMB_FILE=~/.pass/.password.tomb
 export PASSWORD_STORE_TOMB_KEY=~/.pass/.password.key.tomb
-export GNUPGHOME=~/.config/.gnupg
+
+# Settings for Xsecurelock
+export XSECURELOCK_AUTH_TIMEOUT=10
+export XSECURELOCK_BLANK_TIMEOUT=40
+export XSECURELOCK_BURNIN_MITIGATION=10
+export XSECURELOCK_DIM_ALPHA=70
+export XSECURELOCK_DIM_FPS=60
+export XSECURELOCK_SAVER_RESET_ON_AUTH_CLOSE=1
+export XSECURELOCK_SHOW_DATETIME=1
+export XSECURELOCK_SINGLE_AUTH_WINDOW=1
+export XSECURELOCK_SHOW_USERNAME=1
+
+# X11 keysum for spawning shell commands from Xsecurelock
+# export XSECURELOCK_KEY_%s_COMMAND=""
 EOF
     source /etc/zsh/zshenv
     git clone https://github.com/zplug/zplug $ZPLUG_HOME
@@ -111,7 +139,7 @@ EOF
 
 install_xmonad() {
     echo "(  ) Installing Xmonad"
-    sudo pacman -Sv xmonad xmonad-contrib rofi
+    sudo pacman -Sv xmonad{,-contrib} rofi net-tools pacman-contrib
     sudo pacman -Sv --needed hsetroot
     git clone https://aur.archlinux.org/polybar.git polybar
     git clone https://aur.archlinux.org/eww-git.git eww

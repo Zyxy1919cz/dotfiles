@@ -15,7 +15,7 @@ fpath=($HOME/.config/.zsh/zplug/repos/vifon/zranger $fpath)
 
 # Setting $PATH variable
 typeset -U PATH path
-path=("$HOME/.local/bin" "$HOME/.config/.emacs/bin" "$HOME/.bin" "$HOME/.cargo/bin"  "$path[@]")
+path=("$HOME/.local/bin" "$HOME/.emacs.d/bin" "$HOME/.bin" "$HOME/.cargo/bin"  "$path[@]")
 export PATH
 
 # ZShell completion

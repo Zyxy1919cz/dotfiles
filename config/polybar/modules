@@ -1,0 +1,328 @@
+;;-----------------------------------------------
+; HINT: Doesn't work on my Lenovo ThinkPad R400
+; FIX: Use custom script
+[module/backlight]
+type = internal/xbacklight
+
+output = LVDS-1
+
+format = <ramp> <label>
+format-background = ${colors.background_alt}
+format-foreground = ${colors.foreground}
+format-overline = ${colors.background}
+format-underline = ${colors.background}
+format-padding = 2
+
+ramp-0 = 
+ramp-1 = 
+ramp-2 = 
+
+lable = %{T1}%percentage%%%{T-}
+
+;;-----------------------------------------------
+[module/battery]
+type = internal/battery
+
+battery = BAT0
+adapter = AC
+
+; sometimes signal doesnt reach 100%
+full-at = 98
+
+; format on charging
+format-charging = <animation-charging> <label-charging>
+format-charging-background = ${colors.background_alt}
+format-charging-foreground = ${colors.foreground}
+format-charging-overline = ${colors.background}
+format-charging-underline = ${colors.background}
+format-charging-padding = 2
+
+; format on discharging
+; TODO: Add timer
+format-discharging = <ramp-capacity> <label-discharging>
+format-discharging-background = ${colors.background_alt}
+format-discharging-foreground = ${colors.foreground}
+format-discharging-overline = ${colors.background}
+format-discharging-underline = ${colors.background}
+format-discharging-padding = 2
+
+; format on full
+format-full = <label-full>
+format-full-prefix = ""
+format-full-background = ${colors.background_alt}
+format-full-foreground = ${colors.foreground}
+format-full-overline = ${colors.background}
+format-full-underline = ${colors.background}
+format-full-padding = 2
+
+; Available tokens:
+;   %percentage% (default)
+;   %time%
+;   %consumption% (shows current charge rate in watts)
+label-charging = %{T1}%percentage%%%{T-}
+label-charging-alt = %{T1}%time% %consumption%%{T-}
+
+; Available tokens:
+;   %percentage% (default)
+;   %time%
+;   %consumption% (shows current discharge rate in watts)
+label-discharging = %{T1}%percentage%%%{T-}
+
+; Available tokens:
+;   %percentage% (default)
+label-full = %{T1}Full%{T-}
+
+time = %h %m
+
+ramp-capacity-0 = 1
+ramp-capacity-0-foreground = #f53c3c
+ramp-capacity-1 = 2
+ramp-capacity-1-foreground = #ffa900
+ramp-capacity-2 = 3
+ramp-capacity-3 = 4
+ramp-capacity-4 = 5
+
+animation-charging-0 = 1
+animation-charging-1 = 2
+animation-charging-2 = 3
+animation-charging-3 = 4
+animation-charging-4 = 5
+animation-charging-framerate = 1500
+
+;;-----------------------------------------------
+[module/cpu]
+type = internal/cpu
+interval = 1
+
+format = <label>
+format-prefix = " "
+format-background = ${colors.background_alt}
+format-foreground = ${colors.foreground}
+format-overline = ${colors.background}
+format-underline = ${colors.background}
+format-font = ${fonts.font_text_meslo}
+format-padding = 2
+format-radius-top = 20
+radius = 20.0
+radius-top = 1.0
+
+label = %{T1}%percentage-cores%
+
+ramp-coreload-spacing = 1
+
+;;-----------------------------------------------
+[module/date]
+type = internal/date
+date = %{T1}%%{F#fff}%H:%M:%S%{F-}%{T-}
+date-alt = %{T1}%%{F#999}%d-%m-%Y%%{F-}%{T-}
+
+format = <label>
+format-prefix = " "
+format-background = ${colors.background_alt}
+format-foreground = ${colors.foreground}
+format-overline = ${colors.background}
+format-underline = ${colors.background}
+format-padding = 2
+
+label = %date%
+
+;;-----------------------------------------------
+[module/ram]
+type = internal/memory
+
+interval = 1
+
+format = <label>
+format-background = ${colors.background_alt}
+format-foreground = ${colors.foreground}
+format-overline = ${colors.background}
+format-underline = ${colors.background}
+format-padding = 2
+
+;Available tokens:
+;   %percentage_used% (default)
+;   %percentage_free%
+;   %gb_used%
+;   %gb_free%
+;   %gb_total%
+;   %mb_used%
+;   %mb_free%
+;   %mb_total%
+;   %percentage_swap_used%
+;   %percentage_swap_free%
+;   %mb_swap_total%
+;   %mb_swap_free%
+;   %mb_swap_used%
+;   %gb_swap_total%
+;   %gb_swap_free%
+;   %gb_swap_used%
+
+label = " %mb_used%"
+
+;;-----------------------------------------------
+[module/wireless-network]
+type = internal/network
+interface = wlp3s0
+interval = 3.0
+ping-interval = 10
+
+format-connected-background = ${colors.background_alt}
+format-connected-foreground = ${colors.foreground}
+format-connected-overline = ${colors.background}
+format-connected-underline = ${colors.background}
+format-connected-padding = 1
+
+format-connected = <ramp-signal> <label-connected>
+label-connected = %essid%
+labal-connected-background = #bc99ed
+label-disconnected =    not connected
+label-disconnected-foreground = #66
+
+ramp-signal-0 = 
+ramp-signal-1 = 
+ramp-signal-2 = 
+ramp-signal-3 = 
+ramp-signal-4 = 
+
+animation-packetloss-0 = 
+animation-packetloss-0-foreground = #ffa64c
+animation-packetloss-1 = 
+animation-packetloss-1-foreground = ${colors.foreground}
+animation-packetloss-framerate = 500
+
+;;-----------------------------------------------
+[module/xkeyboard]
+type = internal/xkeyboard
+
+blacklist-0 = num lock
+blacklist-1 = scroll lock
+
+format = <label-layout> <label-indicator>
+format-prefix = " "
+format-background = ${colors.background_alt}
+format-foreground = ${colors.foreground}
+format-overline = ${colors.background}
+format-underline = ${colors.background}
+format-padding = 2
+
+label-layout = %{T1}%layout%{T-}
+label-indicator-on = %{T1}%name%%{T-}
+label-indicator-on-foreground = ${colors.foreground}
+
+;;-----------------------------------------------
+[module/pulseaudio]
+type = internal/pulseaudio
+sink = alsa_output.pci-0000_12_00.3.analog-stereo
+use-ui-max = false
+
+interval = 4
+
+format-volume = <ramp-volume> <label-volume>
+format-volume-background = ${colors.background_alt}
+format-volume-foreground = ${colors.foreground}
+format-volume-overline = ${colors.background}
+format-volume-underline = ${colors.background}
+format-volume-padding = 2
+
+format-muted = <label-muted>
+format-muted-prefix = 
+format-muted-background = ${colors.background_alt}
+format-muted-foreground = ${colors.foreground}
+format-muted-overline = ${colors.background}
+format-muted-underline = ${colors.background}
+format-muted-padding = 2
+
+label-volume = %percentage%%
+
+label-muted = " Muted"
+label-muted-foreground = ${colors.red}
+
+ramp-volume-0 = 
+ramp-volume-1 = 
+ramp-volume-2 = 
+
+;;-----------------------------------------------
+[module/mpd]
+type = internal/mpd
+
+; Host where mpd is running (either ip or domain name)
+; Can also be the full path to a unix socket where mpd is running.
+host = 127.0.0.1
+port = 6600
+password = mysecretpassword
+
+; Seconds to sleep between progressbar/song timer sync
+; Default: 1
+interval = 2
+
+; Available tags:
+;   <label-song> (default)
+;   <label-time>
+;   <bar-progress>
+;   <toggle> - gets replaced with <icon-(pause|play)>
+;   <toggle-stop> - gets replaced with <icon-(stop|play)>
+;   <icon-random>
+;   <icon-repeat>
+;   <icon-repeatone> (deprecated)
+;   <icon-single> - Toggle playing only a single song. Replaces <icon-repeatone>
+;   <icon-consume>
+;   <icon-prev>
+;   <icon-stop>
+;   <icon-play>
+;   <icon-pause>
+;   <icon-next>
+;   <icon-seekb>
+;   <icon-seekf>
+format-online = <icon-prev> <icon-seekb> <icon-stop> <toggle> <icon-seekf> <icon-next>  <icon-repeat> <icon-random>  <bar-progress> <label-time>  <label-song>
+;format-playing = ${self.format-online}
+;format-paused = ${self.format-online}
+;format-stopped = ${self.format-online}
+
+; Available tags:
+;   <label-offline>
+; Default: ""
+;format-offline = <label-offline>
+
+; Available tokens:
+;   %artist%
+;   %album-artist%
+;   %album%
+;   %date%
+;   %title%
+; Default: %artist% - %title%
+label-song = 𝄞 %artist% - %title%
+
+; Available tokens:
+;   %elapsed%
+;   %total%
+; Default: %elapsed% / %total%
+;label-time = %elapsed% / %total%
+
+; Available tokens:
+;   None
+label-offline = 🎜 mpd is offline
+
+; Only applies if <icon-X> is used
+icon-play = ⏵
+icon-pause = ⏸
+icon-stop = ⏹
+icon-prev = ⏮
+icon-next = ⏭
+icon-seekb = ⏪
+icon-seekf = ⏩
+icon-random = 🔀
+icon-repeat = 🔁
+icon-repeatone = 🔂
+icon-single = 🔂
+icon-consume = ✀
+
+; Used to display the state of random/repeat/repeatone/single
+; Only applies if <icon-[random|repeat|repeatone|single]> is used
+toggle-on-foreground = #ff
+toggle-off-foreground = #55
+
+; Only applies if <bar-progress> is used
+bar-progress-width = 45
+bar-progress-indicator = |
+bar-progress-fill = ─
+bar-progress-empty = ─

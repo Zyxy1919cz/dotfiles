@@ -4,11 +4,13 @@ import System.Exit
 import Graphics.X11.ExtraTypes.XF86
 
 -- DATA
-import Data.Monoid
 import qualified Data.Map        as M
+-- import Data.Monoid
+import Data.List (sortBy)
+import Data.Function (on)
 
 -- HOOKS
-import XMonad.Hooks.DynamicLog
+-- import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks (avoidStruts, manageDocks, docks)
 
 -- LAYOUT
@@ -16,23 +18,15 @@ import XMonad.Layout.Spacing
 
 -- UTILS
 import XMonad.Util.SpawnOnce
-import XMonad.Util.Run
+import XMonad.Util.Run (safeSpawn)
 
 -- DATA structures and DBUS
 import qualified XMonad.StackSet as W
 import XMonad.Util.NamedWindows (getName)
-import Data.List (sortBy)
-import Data.Function (on)
 import Control.Monad (forM_, join)
 
 myFont :: String
 myFont = "Meslo LG S"
-
-myEwwMain :: String
-myEwwMain = ""
-
-myEwwSide :: String
-myEwwMain = ""
 
 myTerminal      :: String
 myTerminal      = "tilix"
@@ -74,8 +68,11 @@ myWorkspaces    = ["<fn=2>\61461</fn>","<fn=2>\59205</fn> ","<fn=2>\59145</fn> "
 --
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
-    -- Volume control
-    [ ((0                 , xF86XK_AudioRaiseVolume), spawn "amixer -q sset Master 4%+")
+    -- Lock screen
+    [ ((modm .|. shiftMask, xK_l ), spawn "xsecurelock 2>&1 | tee -a /tmp/xsecurelock.log & disown")
+
+    -- volume control
+    , ((0                 , xF86XK_AudioRaiseVolume), spawn "amixer -q sset Master 4%+")
     , ((0                 , xF86XK_AudioLowerVolume), spawn "amixer -q sset Master 4%-")
     , ((0                 , xF86XK_AudioMute    )   , spawn "amixer set Master toggle")
 
@@ -94,11 +91,11 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- launch dmenu
     , ((modm,               xK_p     ), spawn "rofi -show drun")
 
+    -- launch firefox
+    , ((modm .|. shiftMask, xK_f), spawn myBrowser)
+
     -- launch Doom emacs
     , ((modm .|. shiftMask, xK_d), spawn myEditor)
-
-    -- launch firefox 
-    , (modm .|. shiftMask, xK_f), spawn myBrowser)
 
     -- close focused window
     , ((modm .|. shiftMask, xK_c     ), kill)
@@ -164,8 +161,6 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     --
     -- mod-[1..9], Switch to workspace N
-    --
-    -- mod-[1..9], Switch to workspace N
     -- mod-shift-[1..9], Move client to workspace N
     --
     [((m .|. modm, k), windows $ f i)
@@ -204,7 +199,7 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 ------------------------------------------------------------------------
 -- Layouts:
 
-myLayout = spacingRaw True (Border 0 2 2 2) True (Border 2 3 3 3) True (tiled ||| Mirror tiled ||| Full)
+myLayout = spacingRaw True (Border 2 2 2 2) True (Border 2 3 3 3) True (tiled ||| Mirror tiled ||| Full)
   where
     -- default tiling algorithm partitions the screen into two panes
     tiled   = Tall nmaster delta ratio
@@ -261,8 +256,8 @@ myStartupHook = do
     spawnOnce "pacwall -u -g &"
     spawnOnce "flameshot &"
     spawnOnce "eww daemon &"
-    spawnOnce "emacs --daemon &"
-    spawnOnce "sh $HOME/.config/polybar/launch.sh &"
+    spawnOnce "emacs --daemon --with-modules &"
+    spawnOnce "sh $HOME/.config/polybar/launchpolybar.sh &"
 
 
 ------------------------------------------------------------------------
@@ -278,14 +273,6 @@ main = do
           layoutHook = avoidStruts $ layoutHook defaults,
           logHook = myEventLogHook
         }
-
---  do
---  forM_ [".xmonad-workspace-log", ".xmonad-title-log"] $ \file -> safeSpawn "mkfifo" ["/tmp/" ++ file]
-
---  xmonad $ docks defaults {
---      manageHook = manageDocks <+> manageHook defaults,
---      layoutHook = avoidStruts $ layoutHook defaults
---    }
 
 defaults = defaultConfig {
       -- simple stuff
