@@ -42,6 +42,7 @@ install_programs() {
     sudo pacman -Sv git base-devel sddm brightnessctl pulseaudio{,-alsa,-equalizer,-jack} alsa-utils qt5-graphicaleffects docker{,-compose} gulp electron python{,-pip} nemo{,-terminal} rustup ttf-ionicons
     sudo rustup self upgrade-data
     # Applications
+    pip install -U platformio
     sudo pacman -Sv flameshot firefox gimp
     git clone https://aur.archlinux.org/discord_arch_electron.git discord
     git clone https://aur.archlinux.org/vscodium-git.git vscode

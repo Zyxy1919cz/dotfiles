@@ -9,31 +9,33 @@ tail = true
 [module/update-packages]
 type = custom/script
 exec = ~/.config/polybar/scripts/update_packages.sh
-interval = 10
+interval = 600
+tail = true
 
 format = <label>
 format-background = ${colors.background_alt}
 format-foreground = ${colors.foreground}
 format-overline = ${colors.background}
 format-underline = ${colors.background}
-format-padding = 2
+format-padding = 1
 
-label = %output%
+label = %{A1:$POLYBARDIR/scripts/update.sh update &:}%output%%{A}
 
 ;;-----------------------------------------------
 [module/vpn-status]
 type = custom/script
 exec = ~/.config/polybar/scripts/vpn-status.sh
 interval = 20
+tail = true
 
 format = <label>
 format-background = ${colors.background_alt}
 format-foreground = ${colors.foreground}
 format-overline = ${colors.background}
 format-underline = ${colors.background}
-format-padding = 2
+format-padding = 1
 
-label = " %{T1}%output%"
+label = "%{T1}%output%"
 
 ;;-----------------------------------------------
 [module/uptime]
@@ -42,15 +44,13 @@ exec = uptime | awk -F, '{sub(".*up ",x,$1);print $1}'
 interval = 60
 
 format = <label>
-format-prefix = " "
 format-background = ${colors.background_alt}
 format-foreground = ${colors.foreground}
 format-overline = ${colors.background}
 format-underline = ${colors.background}
-format-padding = 1
-format-margin = 1
+format-padding = 0
 
-label = %{T1}%{F#3ea832}%output% %{F-}%{T-}
+label = %{T1}%{F#3ea832}Up%output% %{F-}
 
 ;;-----------------------------------------------
 [module/powermenu]
@@ -98,21 +98,6 @@ inherit = module/space-main
 content = "  "
 
 ;;-----------------------------------------------
-[module/brightnessctl]
-type = custom/script
-
-exec = brightnessctl | grep % | awk '{print $4}' | sed 's/[()]//g'
-interval = 5
-
-format = <label>
-format-background = ${colors.background_alt}
-format-foreground = ${colors.foreground}
-format-overline = ${colors.background}
-format-underline = ${colors.background}
-format-padding = 2
-
-lable = %{T1}%output%
-
 [module/memory]
 type = custom/script
 
@@ -125,10 +110,11 @@ format-background = ${colors.background_alt}
 format-foreground = ${colors.foreground}
 format-overline = ${colors.background}
 format-underline = ${colors.background}
-format-padding = 2
+format-padding = 1
 
 lable = %{T1}%output%
 
+;;-----------------------------------------------
 [module/packages]
 type = custom/script
 
@@ -142,6 +128,6 @@ format-background = ${colors.background_alt}
 format-foreground = ${colors.foreground}
 format-overline = ${colors.background}
 format-underline = ${colors.background}
-format-padding = 2
+format-padding = 1
 
 lable = %{T1}%output%

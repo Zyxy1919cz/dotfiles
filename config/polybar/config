@@ -12,7 +12,6 @@ margin-bottom = 0
 margin-top = 0
 
 ; Include external files
-include-file = $POLYBARDIR/bars
 include-file = $POLYBARDIR/modules
 include-file = $POLYBARDIR/user_modules
 
@@ -27,19 +26,19 @@ compositing-underline = over
 compositing-border = over
 
 [colors]
-background = #d7312541
-background_alt = #fa490656
-foreground = #ff4c010b
+background = #ff0e1111
+background_alt = #ff232b2b
+foreground = #ff6f00ff
 ; foreground_alt =
 ; primary =
 ; secondary =
 red = #ffc70000
 
 [fonts]
-font_icon_awesome = "Font Awesome 5 Free Solid:size=11;2"
-font_icon_material = "MaterialIcons:size=10;2"
-font_icon_ionicons = "Ionicons:size=10;0"
-font_icon_roboto = "RobotoMono Nerd Font Mono:size=10;2"
+font_icon_awesome = "Font Awesome 5 Free Solid:size=12;3"
+font_icon_material = "MaterialIcons:size=14;4"
+font_icon_ionicons = "Ionicons:size=14;0"
+font_icon_roboto = "RobotoMono Nerd Font Mono:size=14;4"
 font_text_meslo = "Meslo LG S:size=8;2"
 
 [bar/top]
@@ -60,8 +59,8 @@ foreground = ${colors.foreground}
 line-size = 3
 
 modules-left = powermenu space-2 workspaces-xmonad
-modules-center = packages space-1 pulseaudio space-1 mpd space-1 battery space-1 backlight brightnessctl
-modules-right = wireless-network space-1 date uptime space-1
+modules-center = space-2 packages space-1 pulseaudio space-1 mpd space-1 battery space-1 backlight space-2
+modules-right =space-2 wireless-network space-1 date uptime
 
 [bar/bottom]
 monitor = ${env:MONITOR:LVDS-1}
