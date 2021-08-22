@@ -90,11 +90,11 @@ install_aurhelper() {
 install_zshell() {
     echo "(1/ ) Installing ZShell..."
     sudo pacman -Sv zsh{,-completions} tmux ranger npm yarn tilix
-    pacaur -S nvm
     touch ~/.config/.zsh/.histfile
     chmod 666 ~/.config/.zsh/.histfile
     sudo tee -a /etc/zsh/zshenv <<EOF
 # Path to config environment variables
+export VISUAL=/usr/bin/vim
 export ROFIDIR=~/.config/rofi
 export RANGERDIR=~/.config/ranger
 export EWWDIR=~/.config/
@@ -129,6 +129,7 @@ export XSECURELOCK_SHOW_USERNAME=1
 # export XSECURELOCK_KEY_%s_COMMAND=""
 EOF
     source /etc/zsh/zshenv
+    pacaur -S nvm
     git clone https://github.com/zplug/zplug $ZPLUG_HOME
     echo "Done"
 }
