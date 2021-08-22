@@ -31,7 +31,7 @@ copy_dirs() {
     cp -vi config/zsh/local_scripts.zsh ~/.config/.zsh/local_scripts.zsh
     cp -vi config/zsh/local_keys.zsh ~/.config/.zsh/local_keys.zsh
     cp -iv config/zsh/packages.zsh ~/.config/.zsh/zplug/packages.zsh
-    cp -iv config/zsh/.p10k.zsh ~/.config/.zsh/.p10k.zsh
+    #cp -iv config/zsh/.p10k.zsh ~/.config/.zsh/.p10k.zsh
 }
 
 install_programs() {
