@@ -160,8 +160,8 @@ append_files() {
 }
 
 make_dirs
-install_zshell
 install_aurhelper
+install_zshell
 copy_dirs
 install_programs
 install_visuals
