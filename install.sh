@@ -24,8 +24,6 @@ copy_dirs() {
     cp -vir config/dunst/* ~/.config/dunst/
     cp -vi config/picom/picom.conf ~/.config/picom/picom.conf
     cp -vir config/tilix/* ~/.config/tilix/
-    cp -vi config/vscode/product.json ~/.config/VSCodium/product.json
-    cp -vi config/vscode/settings.json ~/.config/VSCodium/User/settings.json
 
     # ZShell config
     cp -vi config/zsh/.zshrc ~/.config/.zsh/.zshrc
@@ -44,14 +42,9 @@ install_programs() {
     # Applications
     pip install -U platformio
     sudo pacman -Sv flameshot firefox gimp
-    git clone https://aur.archlinux.org/discord_arch_electron.git discord
-    git clone https://aur.archlinux.org/vscodium-git.git vscode
-    git clone https://aur.archlinux.org/auracle-git.git aur
-    git clone https://aur.archlinux.org/pacaur.git pacaur
-    cd discord && makepkg -sic && cd .. && rm -frvd discord
-    cd aur && makepkg -sic && cd .. && rm -frvd aur
-    cd pacaur && makepkg -sic && cd .. && rm -frvd pacaur
-    cd vscode && makepkg -sic && cd .. && rm -frvd vscode
+    pacaur -S discord_arch_electron vscodium-git
+    cp -vi config/vscode/product.json ~/.config/VSCodium/product.json
+    cp -vi config/vscode/settings.json ~/.config/VSCodium/User/settings.json
     # Wakatime
     sudo pip install wakatime
     systemctl enable sddm
@@ -60,14 +53,10 @@ install_programs() {
 
 install_visuals() {
     echo "(2/ ) Installing Fonts..."
-    git clone https://aur.archlinux.org/nerd-fonts-roboto-mono.git roboto
-    git clone https://aur.archlinux.org/ttf-meslo.git meslo
-    cd roboto && makepkg -sci && cd .. && rm -rdfv roboto
-    cd meslo && makepkg -sci && cd .. && rm -rdfv meslo
+    pacaur -S ttf-meslo nerd-fonts-roboto-mono
     echo "Done"
     echo "(3/ ) Installing Cursor..."
-    git clone https://github.com/yeyushengfan258/Lyra-Cursors.git Lyra
-    cd Lyra && sudo ./install.sh && cd .. && rm -fdrv Lyra
+    pacaut -S Lyra-Cursors
     sudo tee -a /etc/gtk-3.0/settings.ini <<EOF
 [Settings]
 gtk-cursor-theme-name=LyraR-cursors
@@ -91,11 +80,17 @@ install_emacs() {
     echo "Done"
 }
 
+install_aurhelper() {
+    git clone https://aur.archlinux.org/auracle-git.git aur
+    git clone https://aur.archlinux.org/pacaur.git pacaur
+    cd aur && makepkg -sic && cd .. && rm -frvd aur
+    cd pacaur && makepkg -sic && cd .. && rm -frvd pacaur
+}
+
 install_zshell() {
     echo "(1/ ) Installing ZShell..."
     sudo pacman -Sv zsh{,-completions} tmux ranger npm yarn tilix
-    git clone https://aur.archlinux.org/nvm.git nvm
-    cd nvm && makepkg -sic && cd .. && rm -frdv nvm
+    pacaur -S nvm
     touch ~/.config/.zsh/.histfile
     chmod 666 ~/.config/.zsh/.histfile
     sudo tee -a /etc/zsh/zshenv <<EOF
@@ -142,28 +137,16 @@ install_xmonad() {
     echo "(  ) Installing Xmonad"
     sudo pacman -Sv xmonad{,-contrib} rofi net-tools pacman-contrib
     sudo pacman -Sv --needed hsetroot
-    git clone https://aur.archlinux.org/polybar.git polybar
-    git clone https://aur.archlinux.org/eww-git.git eww
-    git clone https://aur.archlinux.org/dunst-git.git dunst
-    git clone https://aur.archlinux.org/pacwall-git.git pacwall
-    git clone https://aur.archlinux.org/picom-jonaburg-git.git picom
-    cd picom && makepkg -sic && cd .. && rm -frvd picom
-    cd dunst && makepkg -sic && cd .. && rm -frvd dunst
-    cd eww && makepkg -sic && cd .. && rm -frvd eww
-    cd pacwall && makepkg -sic && cd .. && rm -frvd pacwall
-    cd polybar && makepkg -sic && cd .. && rm -frvd polybar
+    pacaur -S polybar eww-git dunst-git pacwall-git picom-jonaburg-git
     echo "Done"
 }
 
 install_pass() {
     echo "(  ) Installing pass"
     sudo pacman -Sv xclip gnupg openssh pass pinentry gnome-keyring
-    git clone https://aur.archlinux.org/tomb.git tomb
-    git clone https://aur.archlinux.org/pass-tomb.git pass-tomb
     curl https://keybase.io/jaromil/pgp_keys.asc | gpg --import
     curl https://pujol.io/keys/0xc5469996f0df68ec.asc | gpg --import
-    cd tomb && makepkg -sci && cd .. && rm -frvd tomb
-    cd pass-tomb && makepkg -sci && cd .. && rm -frvd pass-tomb
+    pacaur -S tomb pass-tomb
     gpg --delete-keys Denis Pujol
     mkdir -vp ~/.pass
     echo "Done"
@@ -178,6 +161,7 @@ append_files() {
 
 make_dirs
 install_zshell
+install_aurhelper
 copy_dirs
 install_programs
 install_visuals
