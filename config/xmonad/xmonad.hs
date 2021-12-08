@@ -1,297 +1,202 @@
--- Manage IMPORTS
-import XMonad
-import System.Exit
-import Graphics.X11.ExtraTypes.XF86
-
 -- DATA
-import qualified Data.Map        as M
--- import Data.Monoid
-import Data.List (sortBy)
-import Data.Function (on)
 
+import Data.Function (on)
+import Data.List (sortBy)
+import qualified Data.Map as M
+import Data.Monoid
+import System.Exit (exitSuccess)
+import XMonad
 -- HOOKS
--- import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.ManageDocks (avoidStruts, manageDocks, docks)
 
 -- LAYOUT
-import XMonad.Layout.Spacing
 
 -- UTILS
-import XMonad.Util.SpawnOnce
-import XMonad.Util.Run (safeSpawn)
 
--- DATA structures and DBUS
+import XMonad.Actions.DynamicProjects
+import XMonad.Hooks.DynamicLog
+import XMonad.Hooks.EwmhDesktops
+import XMonad.Hooks.ManageDocks
+import XMonad.Layout.Spacing
 import qualified XMonad.StackSet as W
-import XMonad.Util.NamedWindows (getName)
-import Control.Monad (forM_, join)
+import qualified XMonad.Util.EZConfig as EZ
+import XMonad.Util.NamedActions
+import XMonad.Util.NamedScratchpad
+import XMonad.Util.Paste (pasteSelection)
+import XMonad.Util.Run (safeSpawn)
+import XMonad.Util.SpawnOnce
 
-myFont :: String
-myFont = "Meslo LG S"
+------------------------------------------------------------------------
+-- Xmonad main IO function
 
-myTerminal      :: String
-myTerminal      = "tilix"
+main :: IO ()
+main =
+  xmonad
+    . dynamicProjects projects
+    . docks
+    . ewmh
+    $ def
+      { modMask = mod1Mask,
+        focusFollowsMouse = True,
+        borderWidth = 0,
+        normalBorderColor = "#dddddd",
+        focusedBorderColor = "#ff0000",
+        terminal = "kitty",
+        workspaces = myWorkspaces,
+        layoutHook = myLayout,
+        handleEventHook = fullscreenEventHook,
+        manageHook = manageDocks <+> myManageHook,
+        logHook = dynamicLog,
+        startupHook = myStartupHook
+      }
+      `EZ.additionalKeysP` additionalKeys'
+      `EZ.additionalMouseBindings` additionalMouseBindings'
 
-myEditor :: String
-myEditor = "emacsclient -c -a 'emacs'"
-
-myBrowser :: String
-myBrowser = "firefox"
-
--- Whether focus follows the mouse pointer.
-myFocusFollowsMouse :: Bool
-myFocusFollowsMouse = True
-
--- Whether clicking on a window to focus also passes the click to the window
-myClickJustFocuses :: Bool
-myClickJustFocuses = False
-
--- Width of the window border in pixels.
-myBorderWidth   :: Dimension
-myBorderWidth   = 0
-
--- My ModMask
-myModMask       :: KeyMask
-myModMask       = mod1Mask
-
--- My border olors
-myNormalBorderColor :: String
-myNormalBorderColor  = "#dddddd"
-myFocusedBorderColor :: String
-myFocusedBorderColor = "#ff0000"
-
--- My Workspaces
+------------------------------------------------------------------------
+-- Startup hook
 myWorkspaces :: [String]
-myWorkspaces    = ["<fn=2>\61461</fn>","<fn=2>\59205</fn> ","<fn=2>\59145</fn> ","4:\61888","\fa9e","6","7","8","9"]
+myWorkspaces = ["wsGEN", "wsBRW", "wsTER", "wsCOD", "wsMED", "wsSYS"] ++ map show [7 .. 9]
 
-------------------------------------------------------------------------
--- Key bindings. Add, modify or remove key bindings here.
---
-myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
-
-    -- Lock screen
-    [ ((modm .|. shiftMask, xK_l ), spawn "xsecurelock 2>&1 | tee -a /tmp/xsecurelock.log & disown")
-
-    -- volume control
-    , ((0                 , xF86XK_AudioRaiseVolume), spawn "amixer -q sset Master 4%+")
-    , ((0                 , xF86XK_AudioLowerVolume), spawn "amixer -q sset Master 4%-")
-    , ((0                 , xF86XK_AudioMute    )   , spawn "amixer set Master toggle")
-
-    -- Brightness control
-    , ((0, xF86XK_MonBrightnessUp),   spawn "brightnessctl set +10%")
-    , ((0, xF86XK_MonBrightnessDown), spawn "brightnessctl set 10%-")
-
-    -- Start Flameshot GUI
-    , ((modm              , xK_Print ), spawn "flameshot gui")
-
-    , ((modm .|. shiftMask, xK_Print ), spawn "flameshot full -p ~/Main/Documents/")
-
-    -- launch a terminal
-    , ((modm .|. shiftMask, xK_t), spawn $ XMonad.terminal conf)
-
-    -- launch dmenu
-    , ((modm,               xK_p     ), spawn "rofi -show drun")
-
-    -- launch firefox
-    , ((modm .|. shiftMask, xK_f), spawn myBrowser)
-
-    -- launch Doom emacs
-    , ((modm .|. shiftMask, xK_d), spawn myEditor)
-
-    -- close focused window
-    , ((modm .|. shiftMask, xK_c     ), kill)
-
-     -- Rotate through the available layout algorithms
-    , ((modm,               xK_space ), sendMessage NextLayout)
-
-    --  Reset the layouts on the current workspace to default
-    , ((modm .|. shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf)
-
-    -- Resize viewed windows to the correct size
-    , ((modm,               xK_n     ), refresh)
-
-    -- Move focus to the next window
-    , ((modm,               xK_Tab   ), windows W.focusDown)
-
-    -- Move focus to the next window
-    , ((modm,               xK_j     ), windows W.focusDown)
-
-    -- Move focus to the previous window
-    , ((modm,               xK_k     ), windows W.focusUp  )
-
-    -- Move focus to the master window
-    , ((modm,               xK_m     ), windows W.focusMaster  )
-
-    -- Swap the focused window and the master window
-    , ((modm,               xK_Return), windows W.swapMaster)
-
-    -- Swap the focused window with the next window
-    , ((modm .|. shiftMask, xK_j     ), windows W.swapDown  )
-
-    -- Swap the focused window with the previous window
-    , ((modm .|. shiftMask, xK_k     ), windows W.swapUp    )
-
-    -- Shrink the master area
-    , ((modm,               xK_h     ), sendMessage Shrink)
-
-    -- Expand the master area
-    , ((modm,               xK_l     ), sendMessage Expand)
-
-    -- Push window back into tiling
-    , ((modm,               xK_t     ), withFocused $ windows . W.sink)
-
-    -- Increment the number of windows in the master area
-    , ((modm              , xK_comma ), sendMessage (IncMasterN 1))
-
-    -- Deincrement the number of windows in the master area
-    , ((modm              , xK_period), sendMessage (IncMasterN (-1)))
-
-    -- Toggle the status bar gap
-    -- Use this binding with avoidStruts from Hooks.ManageDocks.
-    -- See also the statusBar function from Hooks.DynamicLog.
-    --
-    -- , ((modm              , xK_b     ), sendMessage ToggleStruts)
-
-    -- Quit xmonad
-    , ((modm .|. shiftMask, xK_q     ), io (exitWith ExitSuccess))
-
-    -- Restart xmonad
-    , ((modm              , xK_q     ), spawn "xmonad --recompile; xmonad --restart")
-    ]
-    ++
-
-    --
-    -- mod-[1..9], Switch to workspace N
-    -- mod-shift-[1..9], Move client to workspace N
-    --
-    [((m .|. modm, k), windows $ f i)
-        | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
-        , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
-    ++
-
-    --
-    -- mod-{w,e,r}, Switch to physical/Xinerama screens 1, 2, or 3
-    -- mod-shift-{w,e,r}, Move client to screen 1, 2, or 3
-    --
-    [((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f))
-        | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
-        , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
-
-
-------------------------------------------------------------------------
--- Mouse bindings: default actions bound to mouse events
---
-myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
-
-    -- mod-button1, Set the window to floating mode and move by dragging
-    [ ((modm, button1), (\w -> focus w >> mouseMoveWindow w
-                                       >> windows W.shiftMaster))
-
-    -- mod-button2, Raise the window to the top of the stack
-    , ((modm, button2), (\w -> focus w >> windows W.shiftMaster))
-
-    -- mod-button3, Set the window to floating mode and resize by dragging
-    , ((modm, button3), (\w -> focus w >> mouseResizeWindow w
-                                       >> windows W.shiftMaster))
-
-    -- you may also bind events to the mouse scroll wheel (button4 and button5)
-    ]
+myStartupHook :: X ()
+myStartupHook = do
+  spawnOnce "xsetroot -cursor_name LyraR-cursors"
+  spawnOnce "picom &"
+  spawnOnce "pacwall -u -g &"
+  spawnOnce "emacs --daemon --with-modules &"
+  spawnOnce "eww daemon &"
+  spawnOnce "flameshot &"
+  spawnOnce "bash $HOME/.config/polybar/launchpolybar.sh &"
 
 ------------------------------------------------------------------------
 -- Layouts:
 
-myLayout = spacingRaw True (Border 2 2 2 2) True (Border 2 3 3 3) True (tiled ||| Mirror tiled ||| Full)
+myLayout = avoidStruts $ spacingRaw True (Border 2 2 2 2) True (Border 2 3 3 3) True (tiled ||| Full)
   where
-    -- default tiling algorithm partitions the screen into two panes
-    tiled   = Tall nmaster delta ratio
-
-    -- The default number of windows in the master pane
+    tiled = Tall nmaster delta ratio
     nmaster = 1
+    ratio = 1 / 2
+    delta = 3 / 100
 
-    -- Default proportion of screen occupied by master pane
-    ratio   = 1/2
-
-    -- Percent of screen to increment by when resizing panes
-    delta   = 3/100
-
-------------------------------------------------------------------------
--- Window rules:
-
-myManageHook = composeAll
-    [ className =? "MPlayer"        --> doFloat
-    , className =? "Gimp"           --> doFloat
-    , resource  =? "desktop_window" --> doIgnore
-    , resource  =? "kdesktop"       --> doIgnore ]
-
-------------------------------------------------------------------------
--- Event handling
-
-myEventHook = mempty
 ------------------------------------------------------------------------
 -- Status bars and logging
 --
-myLogHook = return ()
+--myLogHook = return ()
+
+myManageHook =
+  composeAll
+    [ className =? "Gimp" --> doFloat,
+      stringProperty "WM_WINDOW_ROLE" =? "gimp-toolbox" --> doFloat,
+      className =? "Pinentry" --> doFloat,
+      className =? "brave-browser" --> doShift "wsBRW"
+    ]
+    <+> namedScratchpadManageHook myScratchpads
 
 ------------------------------------------------------------------------
--- My event log for polybar
+-- My Projects
 
-myEventLogHook = do
-  winset <- gets windowset
-  title <- maybe (return "") (fmap show . getName) . W.peek $ winset
-  let currWs = W.currentTag winset
-  let wss = map W.tag $ W.workspaces winset
-  let wsStr = join $ map (fmt currWs) $ sort' wss
+projects :: [Project]
+projects =
+  [ Project
+      { projectName = "org",
+        projectDirectory = "~/Main/Documents/org",
+        projectStartHook = Just $ do
+          spawn "emacsclient -c -a 'emacs'"
+      },
+    Project
+      { projectName = "",
+        projectDirectory = "~/Main/Documents",
+        projectStartHook = Just $ do
+          spawn "termite -e htop"
+      }
+  ]
 
-  io $ appendFile "/tmp/.xmonad-title-log" (title ++ "\n")
-  io $ appendFile "/tmp/.xmonad-workspace-log" (wsStr ++ "\n")
+-- My Scratchpads
 
-  where fmt currWs ws
-          | currWs == ws = "[" ++ ws ++ "]"
-          | otherwise    = " " ++ ws ++ " "
-        sort' = sortBy (compare `on` (!! 0))
-------------------------------------------------------------------------
--- Startup hook
+myScratchpads :: [NamedScratchpad]
+myScratchpads =
+  [ NS "notes" spawnNotes findNotes manageNotes
+  ]
+  where
+    spawnNotes = "emacsclient -nc --frame-parameters='(quote (name . \"emacsnotes\"))' --eval '(doom/set-frame-opacity 100)' '~/Main/Documents/org/notes.org'"
+    findNotes = title =? "emacsnotes"
+    manageNotes = customFloating $ W.RationalRect 0.59 0.09 0.4 0.5
 
-myStartupHook = do
-    spawnOnce "picom &"
-    spawnOnce "pacwall -u -g &"
-    spawnOnce "flameshot &"
-    spawnOnce "eww daemon &"
-    spawnOnce "emacs --daemon --with-modules &"
-    spawnOnce "sh $HOME/.config/polybar/launchpolybar.sh &"
+-- Key bindings. Add, modify or remove key bindings here.
+--
 
+additionalKeys' :: [(String, X ())]
+additionalKeys' =
+  windowsAndWorkspace
+    <> applications
+    <> system
+  where
+    windowsAndWorkspace :: [(String, X ())]
+    windowsAndWorkspace =
+      [ ("M-S-c", kill),
+        ("M-<Space>", sendMessage NextLayout),
+        ("M-<Tab>", windows W.focusDown),
+        ("M-j", windows W.focusDown),
+        ("M-k", windows W.focusUp),
+        ("M-m", windows W.focusMaster),
+        ("M-<Return>", windows W.swapMaster),
+        ("M-S-j", windows W.swapDown),
+        ("M-S-k", windows W.swapUp),
+        ("M-n", refresh),
+        ("M-h", sendMessage Shrink),
+        ("M-l", sendMessage Expand),
+        ("M-t", sendMessage ToggleStruts),
+        ("M-S-t", withFocused $ windows . W.sink)
+      ]
+    applications :: [(String, X ())]
+    applications =
+      [ ("M-p", spawn "rofi -show drun"),
+        ("M-S-l", spawn "xsecurelock 2>&1 | tee -a /tmp/xsecurelock.log & disown"),
+        ("M-S-b", spawn "brave"),
+        ("M-S-<Return>", spawn "kitty"),
+        ("M-<Print>", spawn "flameshot gui"),
+        ("M-S-<Print>", spawn "flameshot full -p ~/Main/Documents"),
+        ("M-S-d d", spawn "emacsclient -c -a 'emacs' "),
+        ("M-S-d e", spawn "emacsclient -c -a '' --eval '(ranger)'"),
+        ("M-S-d t", spawn "emacsclient -c -a '' --eval '(vterm)'"),
+        ("M-s n", namedScratchpadAction myScratchpads "notes"),
+        ("M-s t", namedScratchpadAction myScratchpads "test")
+      ]
+    system :: [(String, X ())]
+    system =
+      [ ("<XF86KbdBrightnessUp>", spawn "brightnessctl set +10%"),
+        ("<XF86KbdBrightnessDown>", spawn "brightnessctl set 10%-"),
+        ("<XF86AudioLowerVolume>", spawn "amixer -q sset Master 4%-"),
+        ("<XF86AudioRaiseVolume>", spawn "amixer -q sset Master 4%+"),
+        ("<XF86AudioMute>", spawn "amixer set Master toggle"),
+        ("M4-<Space>", spawn "~/.local/bin/layout_switch.sh"),
+        ("<Insert>", pasteSelection),
+        ("M-S-q", io exitSuccess),
+        ("M-q", spawn "xmonad --recompile; xmonad --restart")
+      ]
+        ++ [ (otherModMask ++ "M-" ++ key, action tag)
+             | (tag, key) <- zip myWorkspaces (map show [1 .. 9]),
+               (otherModMask, action) <-
+                 [ ("", windows . W.view),
+                   ("S-", windows . W.shift)
+                 ]
+           ]
+        ++ [ (otherModMask ++ "M-" ++ key, screenWorkspace screen >>= flip whenJust (windows . action))
+             | (key, screen) <- zip ["w", "e", "r"] [0 ..],
+               (otherModMask, action) <-
+                 [ ("", W.view),
+                   ("S-", W.shift)
+                 ]
+           ]
 
-------------------------------------------------------------------------
--- Xmonad stratup
-
-main = do
-  forM_ [".xmonad-workspace-log", ".xmonad-title-log"] $ \file -> do
-    safeSpawn "mkfifo" ["/tmp/" ++ file]
-
-  xmonad $ docks defaults
-        {
-          manageHook = manageDocks <+> manageHook defaults,
-          layoutHook = avoidStruts $ layoutHook defaults,
-          logHook = myEventLogHook
-        }
-
-defaults = defaultConfig {
-      -- simple stuff
-        terminal           = myTerminal,
-        focusFollowsMouse  = myFocusFollowsMouse,
-        borderWidth        = myBorderWidth,
-        modMask            = myModMask,
-        workspaces         = myWorkspaces,
-        normalBorderColor  = myNormalBorderColor,
-        focusedBorderColor = myFocusedBorderColor,
-
-      -- key bindings
-        keys               = myKeys,
-        mouseBindings      = myMouseBindings,
-
-      -- hooks, layouts
-        layoutHook         = myLayout,
-        manageHook         = myManageHook,
-        handleEventHook    = myEventHook,
-        logHook            = myLogHook,
-        startupHook        = myStartupHook
-    }
+additionalMouseBindings' :: [((ButtonMask, Button), Window -> X ())]
+additionalMouseBindings' =
+  [ ( (mod1Mask, button1),
+      \w ->
+        focus w >> mouseMoveWindow w
+          >> windows W.shiftMaster
+    ),
+    ( (mod1Mask, button2),
+      \w ->
+        focus w >> mouseResizeWindow w
+          >> windows W.shiftMaster
+    )
+  ]
